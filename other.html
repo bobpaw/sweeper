@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="content"></div>
+<script>
+var link = window.location;
+var width = undefined;
+var height = undefined;
+
+if (link.search("width") !== -1) {
+width = parseInt(
+link.substring(
+link.search("width") + "width".length + 1, link.indexOf("&", link.search("width")) // indexOf
+) // search
+) // substring
+) // parseInt
+;
+}
+if (link.search("height") !== -1) {
+width = parseInt(link.substring(link.search("height") + "height".length + 1, link.indexOf("&", link.search("height")));
+}
+document.getElementById("content").innerHTML += "Width: " + width.toString() + "<br>";
+document.getElementById("content").innerHTML += "Height: " + height.toString() + "<br>";
+</script>
+<form method="get" action="other.html">
+Width: <input type="text" name="width"><br>
+Height: <input type="text" name="height"> <br>
+<input type="submit" value="submit datas">
+</form>
+</body>
+</html>

@@ -26,23 +26,21 @@ for ($i = 0; $i < count($mines); $i++) {
     $boardmap[(int)substr($mines[$i], 3, 2)][(int)substr($mines[$i],0,2)] = "M";
 }
 
-var_dump($boardmap);
 // Assign numbers
 for ($y = 0; $y < $height; $y++) {
     for ($x = 0; $x < $width; $x++) {
         $count = 0;
-        if ($x > 0 and $boardmap[$y][$x - 1] == "M") $count++;
-        if ($y > 0 and $boardmap[$y - 1][$x] == "M") $count++;
-        if ($x < $width - 1 and $boardmap[$y][$x + 1] == "M") $count++;
-        if ($y < $height - 1 and $boardmap[$y+1][$x] == "M") $count++;
-        if ($x > 0 and $y > 0 and $boardmap[$y-1][$x - 1] == "M") $count++;
-        if ($x > 0 and $y < $height - 1 and $boardmap[$y+1][$x - 1] == "M") $count++;
-        if ($x < $width - 1 and $y > 0 and $boardmap[$y-1][$x + 1] == "M") $count++;
-        if ($x > 0 and $y > 0 and $boardmap[$y - 1][$x - 1] == "M") $count++;
-        if ($boardmap[$y][$x] != "M") $boardmap[$y][$x] = $count;
+        if ($x > 0 and $boardmap[$y][$x - 1] === "M") $count++;
+        if ($y > 0 and $boardmap[$y - 1][$x] === "M") $count++;
+        if ($x < $width - 1 and $boardmap[$y][$x + 1] === "M") $count++;
+        if ($y < $height - 1 and $boardmap[$y+1][$x] === "M") $count++;
+        if ($x > 0 and $y > 0 and $boardmap[$y-1][$x - 1] === "M") $count++;
+        if ($x > 0 and $y < $height - 1 and $boardmap[$y+1][$x - 1] === "M") $count++;
+        if ($x < $width - 1 and $y > 0 and $boardmap[$y-1][$x + 1] === "M") $count++;
+        if ($x < $width and $y < $height and $boardmap[$y + 1][$x + 1] === "M") $count++;
+        if ($boardmap[$y][$x] !== "M") $boardmap[$y][$x] = (int) $count;
     }
 }
-var_dump($boardmap);
 ?>
 <!DOCTYPE html>
 <html>
@@ -52,6 +50,7 @@ var_dump($boardmap);
     <title>Minesweeper</title>
     <link type="text/css" rel="stylesheet" href="tiles.css">
     <script type="application/javascript">
+    var width = window.location;
     var unrevealeds = document.getElementsByClassName('unrevealed');
 
 function reveal (object) {
@@ -83,9 +82,9 @@ function reveal (object) {
     for ($y = 0; $y < $height; $y++) {
         echo("<tr>\n");
         for ($x = 0; $x < $width; $x++) {
-            if ($boardmap[$y][$x] != "M") {
+            if ($boardmap[$y][$x] !== "M") {
                 echo("<td class='unrevealed n" . $boardmap[$y][$x] . "' onclick='reveal(this)'></td>\n");
-            } else if ($boardmap[$y][$x] == "M") {
+            } else if ($boardmap[$y][$x] === "M") {
                 echo("<td class='unrevealed mine' onclick='reveal(this)'></td>\n");
             } else {
                 echo("<td class='unrevealed null' onclick='reveal(this)'></td>\n");
