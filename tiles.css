@@ -19,3 +19,9 @@ td.revealed {
     cursor: default;
     background-color: #c6c6c6;
 }
+
+td.flagged {
+    cursor: pointer;
+    background-color: #c6c6c6;
+    background-image: url("flag.png");
+}

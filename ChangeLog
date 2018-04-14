@@ -1,0 +1,88 @@
+2018-04-14  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* flag.png: Flag image added.
+
+	* ChangeLog: Added, up to date based off Git logs.
+
+	* index.html: Added JavaScript populated mine count.
+	Added form to reload.
+
+	* tiles.css: Added CSS block for flagged class.
+	Gives TD background image.
+
+	* sweeper.js: Changed test for empty variables to test for any falsity.
+	Added mine count.
+	Each map value is an object rather than just a value.
+	Cell count is string rather than number.
+	Mines are filtered to insure 10 different mines.
+	`if' statements in count changed to executing {} blocks.
+	Assigns click and contextmenu listeners at page load.
+	(reveal): Removed debug log at beginning of onclick handler.
+	Changes behavior if argument is Event or HTML object.
+	Removes right click action.
+	Changed to switch case setup.
+	(flag): Added for right clicks on unrevealed cells.
+	Updates mine count.
+
+2018-04-13  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.html: JavaScript moved out.
+	Auto-indentation fixed.
+	Includes JavaScript files.
+
+	* sweeper.js: Script moved here.
+
+2018-04-12  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* http-get.js: File created.
+	Reads HTTP-GET variables.
+
+	* index.html: Create board with JavaScript.
+
+	* index.php: File deleted.
+
+	* other.html: Script moved from here to http-get.js
+	Includes http-get.js
+
+2018-04-12  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.php: Count tests for identicality, not equality after type-juggling.
+	Corrected some limit tests.
+	Removed most of debug comments.
+
+	* other.html: File added to test retrieving HTTP-GET parameters.
+
+2018-04-11  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.php: Corrected range of mines, where it was possible for them to be created outside of dimensions.
+	Changed bounds for x from height to width.
+	When assigning mines onto map, explicitly set keys to ints.
+	HTML comments output by PHP to determine source of some errors.
+	Dump $boardmap to determine why no numbers were output.
+	Partially fixed count loop.
+	JavaScript no longer included from sweeper.js
+	EventListeners added with PHP rather than with JavaScript
+
+	* tiles.css Darkened revealed tile colors
+	Change cursor type on unrevealed tiles.
+	Added definitions for unrevealed class.
+
+2018-04-10  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* .gitignore: File added.
+	Defined to ignore nano and Emacs autosaves.
+
+	* index.php: File added.
+
+	* tiles.css: File added.
+
+2018-04-09  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* LICENSE: LGPLv3 incorrectly added. Replaced with GPLv3.
+
+2018-04-08  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* LICENSE: GPLv3 added.
+
+	* README.md: File added.
+
