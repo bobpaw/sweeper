@@ -6,9 +6,11 @@
 
 	* index.html: Added JavaScript populated mine count.
 	Added form to reload.
+	Added div for end message.
 
 	* tiles.css: Added CSS block for flagged class.
 	Gives TD background image.
+	Added correct and wrong classes.
 
 	* sweeper.js: Changed test for empty variables to test for any falsity.
 	Added mine count.
@@ -17,12 +19,20 @@
 	Mines are filtered to insure 10 different mines.
 	`if' statements in count changed to executing {} blocks.
 	Assigns click and contextmenu listeners at page load.
+	Functions moved to show order of execution.
+	Corrected typo.
 	(reveal): Removed debug log at beginning of onclick handler.
 	Changes behavior if argument is Event or HTML object.
 	Removes right click action.
 	Changed to switch case setup.
+	No longer uses alert on lose.
+	Correctly reveals everything on lose.
 	(flag): Added for right clicks on unrevealed cells.
 	Updates mine count.
+	No longer uses alert on win.
+	No longer manually removes EventListeners, as editing innerHTML fixes it.
+	(Coordinates): Class added for testing equality.
+	Global variable declarations added to beginning
 
 2018-04-13  Aiden Woodruff  <aiden.woodruff@gmail.com>
 

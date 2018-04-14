@@ -25,3 +25,14 @@ td.flagged {
     background-color: #c6c6c6;
     background-image: url("flag.png");
 }
+
+td.wrong {
+    cursor: default;
+    background-color: #ff0000;
+}
+
+td.correct {
+    cursor: default;
+    background-image: url("flag.png");
+    background-color: #00ff00;
+}

@@ -1,93 +1,17 @@
-// Test for HTTP-GET variables
-var dimensions = read_http_get(["width", "height", "mines"]);
-if (!dimensions["width"] || dimensions["width"] < 1) {
-    dimensions["width"] = 10;
-}
-if (!dimensions["height"] || dimensions["height"] < 1) {
-    dimensions["height"] = 10;
-}
-if (!dimensions["mines"] || dimensions["mines"] > dimensions["width"] * dimensions["height"]) {
-    dimensions["mines"] = 20;
-}
-
+// Global variables
 var boardmap = Array();
 var mines = Array();
 var unflagged = 0;
+var table = "";
 
-// Initialize Board array
-for (var y = 0; y < dimensions["height"]; y++) {
-    boardmap[y] = Array();
-    for (x = 0; x < dimensions["width"]; x++) {
-	boardmap[y][x] = {
-	    value: "0",
-	    state: "U"
-	}
-    }
-}
-
-// Filter method
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
-}
-
-// Get random mine values
-while (mines.length < dimensions["mines"]) {
-    mines.push( {
-	x: Math.floor(Math.random() * dimensions["width"]),
-	y: Math.floor(Math.random() * dimensions["height"])
-    });
-    mines.filter(onlyUnique);
-}
-
-unflagged = mines.length;
-
-// Place mines
-for (var i = 0; i < mines.length; i++) {
-    boardmap[mines[i].y][mines[i].x].value = "M";
-}
-
-// Assign numbers
-for (var y = 0, count = 0, width = dimensions["width"], height = dimensions["height"]; y < height; y++) {
-    for (var x = 0; x < width; x++, count = 0) {
-	if (boardmap[y][x].value === "M") {
-	    continue;
-	}
-	if (x > 0 && boardmap[y][x - 1].value === "M") {
-	    count++;
-	}
-	if (y > 0 && boardmap[y - 1][x].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && boardmap[y][x + 1].value === "M") {
-	    count++;
-	}
-	if (y < height - 1 && boardmap[y+1][x].value === "M") {
-	    count++;
-	}
-	if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
-	    count++;
-	}
-	if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
-	    count++;
-	}
-	boardmap[y][x].value = count.toString();
-    }
-}
-
-// Retur cell object from x and y coordinates
+// Return cell object from x and y coordinates
 function get_cell (x, y) {
     return document.getElementById( (x.toString() + "," + y.toString() ) );
 }
 
 // Return x y dict from cell object
 function get_cell_xy (object) {
-    coord = {};
+    coord = new Coordinates();
     coord.x = parseInt(object.id.substring(0, object.id.indexOf(",")), 10);
     coord.y = parseInt(object.id.substring(object.id.indexOf(",")+1), 10);
     return coord;
@@ -146,13 +70,33 @@ function reveal (e) {
 	}
 	break;
     case "M":
-	for (var y = 0, td = undefined; y < height; y++) {
-	    for (var x = 0; x < width; x++) {
-		reveal(get_cell(x, y));
+	object.innerHTML = "M";
+	object.classList.add("wrong");
+	for (var y = 0; y < dimensions["height"]; y++) {
+	    for (var x = 0; x < dimensions["width"]; x++) {
+		if (boardmap[y][x].state === "U") {
+		    reveal(get_cell(x, y));
+		}
+		if (boardmap[y][x].state === "F") {
+		    var correct = false;
+		    for (var i = 0; i < mines.length; i++) {
+			if (mines[i].equals(new Coordinates(x, y))) {
+			    correct = true;
+			    break;
+			}
+		    }
+		    reveal(get_cell(x, y));
+		    get_cell(x, y).innerHTML = "";
+		    if (correct) {
+			get_cell(x,y).classList.remove("flagged");
+			get_cell(x,y).classList.remove("wrong");
+			get_cell(x,y).classList.add("correct");
+		    }
+		}
 	    }
 	}
-	object.innerHTML = "M";
-	alert("You have lost. I'm so very sorry. :(");
+	document.getElementById("board").innerHTML += "";
+	document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
 	break;
     default:
 	object.innerHTML = boardmap[coord.y][coord.x].value;
@@ -189,18 +133,115 @@ function flag (e) {
 	}
     }
     if (allgone) {
-	var stuff = document.body.getElementsByTagName("td");
-	for (var i = 0; i < stuff.length; i++) {
-	    stuff[i].onclick = null;
-	    stuff[i].oncontextmenu = null;
+	for (var y = 0; y < dimensions["height"]; y++) {
+	    for (var x = 0; x < dimensions["width"]; x++) {
+		if (boardmap[y][x].state === "F") {
+		    get_cell(x, y).classList.remove("flagged");
+		    get_cell(x, y).classList.add("correct");
+		}
+	    }
 	}
-	alert("Congratulations! You win.");
+	document.getElementById("board").innerHTML += "";
+	document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</br>";
     } else {
 	document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
     }
 }
 
-var table = "";
+// Test for HTTP-GET variables
+var dimensions = read_http_get(["width", "height", "mines"]);
+if (!dimensions["width"] || dimensions["width"] < 1) {
+    dimensions["width"] = 10;
+}
+if (!dimensions["height"] || dimensions["height"] < 1) {
+    dimensions["height"] = 10;
+}
+if (!dimensions["mines"] || dimensions["mines"] > dimensions["width"] * dimensions["height"]) {
+    dimensions["mines"] = 20;
+}
+
+class Coordinates {
+    constructor (x, y) {
+	this.x = x;
+	this.y = y;
+    }
+    equals(other) {
+	if (other instanceof Coordinates) {
+	    if (this.x === other.x && this.y === other.y) {
+		return true;
+	    }
+	} else {
+	    return false;
+	}
+    }
+}
+
+// Initialize Board array
+for (var y = 0; y < dimensions["height"]; y++) {
+    boardmap[y] = Array();
+    for (x = 0; x < dimensions["width"]; x++) {
+	boardmap[y][x] = {
+	    value: "0",
+	    state: "U"
+	}
+    }
+}
+
+// Filter method
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
+// Get random mine values
+while (mines.length < dimensions["mines"]) {
+    mines.push(new Coordinates(
+	Math.floor(Math.random() * dimensions["width"]),
+	Math.floor(Math.random() * dimensions["height"])
+    ));
+    mines.filter(onlyUnique);
+}
+
+unflagged = mines.length;
+
+// Place mines
+for (var i = 0; i < mines.length; i++) {
+    boardmap[mines[i].y][mines[i].x].value = "M";
+}
+
+// Assign numbers
+for (var y = 0, count = 0, width = dimensions["width"], height = dimensions["height"]; y < height; y++) {
+    for (var x = 0; x < width; x++, count = 0) {
+	if (boardmap[y][x].value === "M") {
+	    continue;
+	}
+	if (x > 0 && boardmap[y][x - 1].value === "M") {
+	    count++;
+	}
+	if (y > 0 && boardmap[y - 1][x].value === "M") {
+	    count++;
+	}
+	if (x < width - 1 && boardmap[y][x + 1].value === "M") {
+	    count++;
+	}
+	if (y < height - 1 && boardmap[y+1][x].value === "M") {
+	    count++;
+	}
+	if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
+	    count++;
+	}
+	if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
+	    count++;
+	}
+	if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
+	    count++;
+	}
+	if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
+	    count++;
+	}
+	boardmap[y][x].value = count.toString();
+    }
+}
+
 for (var y = 0; y < dimensions["height"]; y++) {
     table += "<tr>";
     for (x = 0; x < dimensions["width"]; x++) {
