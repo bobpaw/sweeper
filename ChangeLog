@@ -21,6 +21,7 @@
 	Assigns click and contextmenu listeners at page load.
 	Functions moved to show order of execution.
 	Corrected typo.
+	Fixed mine placement.
 	(reveal): Removed debug log at beginning of onclick handler.
 	Changes behavior if argument is Event or HTML object.
 	Removes right click action.
@@ -33,6 +34,7 @@
 	No longer manually removes EventListeners, as editing innerHTML fixes it.
 	(Coordinates): Class added for testing equality.
 	Global variable declarations added to beginning
+	Added find and in_arr functions to find Coordinate object in an array.
 
 2018-04-13  Aiden Woodruff  <aiden.woodruff@gmail.com>
 

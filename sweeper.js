@@ -165,7 +165,7 @@ class Coordinates {
 	this.x = x;
 	this.y = y;
     }
-    equals(other) {
+    equals (other) {
 	if (other instanceof Coordinates) {
 	    if (this.x === other.x && this.y === other.y) {
 		return true;
@@ -173,6 +173,23 @@ class Coordinates {
 	} else {
 	    return false;
 	}
+    }
+    in_arr (array) {
+	for (var i = 0; i < array.length; i++) {
+	    if (array[i].equals(this)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    find (array) {
+	for (var i = 0; i < array.length; i++) {
+	    if (array[i].equals(this)) {
+		return i;
+	    }
+	}
+	return -1;
     }
 }
 
@@ -188,17 +205,17 @@ for (var y = 0; y < dimensions["height"]; y++) {
 }
 
 // Filter method
-function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
+function onlyUniqueCoord(value, index, self) {
+    return value.find(self) === index;
 }
 
 // Get random mine values
-while (mines.length < dimensions["mines"]) {
+while (mines.length < parseInt(dimensions["mines"],10)) {
     mines.push(new Coordinates(
 	Math.floor(Math.random() * dimensions["width"]),
 	Math.floor(Math.random() * dimensions["height"])
     ));
-    mines.filter(onlyUnique);
+    mines = mines.filter(onlyUniqueCoord);
 }
 
 unflagged = mines.length;
