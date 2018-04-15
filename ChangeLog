@@ -1,3 +1,11 @@
+2018-04-15    <aiden.woodruff@gmail.com>
+
+	* sweeper.js (Coordinates.constructor): Added constructor to autoconvert string x and y.
+	Added option to make new object from old object.
+	(Coordinates.copy): Returns new object.
+	(flag): Update minecount even on win.
+	Don't win unless only mines are flagged.
+
 2018-04-14  Aiden Woodruff  <aiden.woodruff@gmail.com>
 
 	* flag.png: Flag image added.

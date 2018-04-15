@@ -127,11 +127,25 @@ function flag (e) {
     } else if (boardmap[coord.y][coord.x].state === "R") {
     }
     var allgone = true;
-    for (var i = 0; i < dimensions["mines"]; i++) {
-	if (boardmap[mines[i].y][mines[i].x].state !== "F") {
-	    allgone = false;
+    var flags = Array();
+    for (var y = 0; y < dimensions["height"]; y++) {
+	for (var x = 0; x < dimensions["width"]; x++) {
+	    if (boardmap[y][x].state === "F") {
+		flags.push(new Coordinates(x, y));
+	    }
 	}
     }
+    if (Math.sign(flags.length - mines.length)) {
+	allgone = false;
+    } else {
+	for (var i = 0; i < flags.length; i++) {
+	    if (! flags[i].in_arr(mines)){
+		allgone = false;
+		break;
+	   }
+	}
+    }
+    document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
     if (allgone) {
 	for (var y = 0; y < dimensions["height"]; y++) {
 	    for (var x = 0; x < dimensions["width"]; x++) {
@@ -143,8 +157,6 @@ function flag (e) {
 	}
 	document.getElementById("board").innerHTML += "";
 	document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</br>";
-    } else {
-	document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
     }
 }
 
@@ -162,8 +174,13 @@ if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > parseInt(dimensi
 
 class Coordinates {
     constructor (x, y) {
-	this.x = x;
-	this.y = y;
+	if (x instanceof Coordinates) {
+	    this.x = x.x;
+	    this.y = x.y;
+	} else {
+	    this.x = typeof x === "string" ? parseInt(x, 10) : x;
+	    this.y = typeof y === "string" ? parseInt(y, 10) : y;
+	}
     }
     equals (other) {
 	if (other instanceof Coordinates) {
@@ -182,7 +199,6 @@ class Coordinates {
 	}
 	return false;
     }
-
     find (array) {
 	for (var i = 0; i < array.length; i++) {
 	    if (array[i].equals(this)) {
@@ -190,6 +206,10 @@ class Coordinates {
 	    }
 	}
 	return -1;
+    }
+    copy () {
+	a = new Coordinates(this.x, this.y);
+	return a;
     }
 }
 
