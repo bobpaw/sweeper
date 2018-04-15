@@ -157,7 +157,7 @@ if (!dimensions["height"] || dimensions["height"] < 1) {
     dimensions["height"] = 10;
 }
 if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > parseInt(dimensions["width"], 10) * parseInt(dimensions["height"], 10)) {
-    dimensions["mines"] = Math.floor(Math.sqrt(dimensions["width"] * dimensions["height"])) * 2;
+    dimensions["mines"] = Math.floor(Math.sqrt(dimensions["width"] * dimensions["height"]));
 }
 
 class Coordinates {
