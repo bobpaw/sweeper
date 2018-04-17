@@ -3,6 +3,9 @@ var boardmap = Array();
 var mines = Array();
 var unflagged = 0;
 var table = "";
+var height = 0;
+var width = 0;
+var total_mines = 0;
 
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
@@ -42,8 +45,6 @@ function reveal (e) {
 	object.innerHTML = "0";
 	var x = coord.x;
 	var y = coord.y;
-	var width = dimensions["width"];
-	var height = dimensions["height"];
 	if (x < width - 1) {
 	    reveal(get_cell(x + 1, y));
 	}
@@ -128,8 +129,8 @@ function flag (e) {
     }
     var allgone = true;
     var flags = Array();
-    for (var y = 0; y < dimensions["height"]; y++) {
-	for (var x = 0; x < dimensions["width"]; x++) {
+    for (var y = 0; y < height; y++) {
+	for (var x = 0; x < width; x++) {
 	    if (boardmap[y][x].state === "F") {
 		flags.push(new Coordinates(x, y));
 	    }
@@ -147,8 +148,8 @@ function flag (e) {
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
     if (allgone) {
-	for (var y = 0; y < dimensions["height"]; y++) {
-	    for (var x = 0; x < dimensions["width"]; x++) {
+	for (var y = 0; y < height; y++) {
+	    for (var x = 0; x < width; x++) {
 		if (boardmap[y][x].state === "F") {
 		    get_cell(x, y).classList.remove("flagged");
 		    get_cell(x, y).classList.add("correct");
@@ -163,13 +164,20 @@ function flag (e) {
 // Test for HTTP-GET variables
 var dimensions = read_http_get(["width", "height", "mines"]);
 if (!dimensions["width"] || dimensions["width"] < 1) {
-    dimensions["width"] = 10;
+    width = 10;
+} else {
+    width = parseInt(dimensions["width"], 10);
 }
 if (!dimensions["height"] || dimensions["height"] < 1) {
-    dimensions["height"] = 10;
+    height = 10;
+} else {
+    height = parseInt(dimensions["height"], 10);
 }
-if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > parseInt(dimensions["width"], 10) * parseInt(dimensions["height"], 10)) {
-    dimensions["mines"] = Math.floor(Math.sqrt(dimensions["width"] * dimensions["height"]));
+if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > (width * height)) {
+    total_mines = Math.floor(Math.sqrt(width * height));
+    total_mines = Math.floor((Math.random() * Math.floor(Math.sqrt(width*height))) + Math.floor(Math.sqrt(width*height)));
+} else {
+    total_mines = parseInt(dimensions["mines"], 10);
 }
 
 class Coordinates {
@@ -214,9 +222,9 @@ class Coordinates {
 }
 
 // Initialize Board array
-for (var y = 0; y < dimensions["height"]; y++) {
+for (var y = 0; y < height; y++) {
     boardmap[y] = Array();
-    for (x = 0; x < dimensions["width"]; x++) {
+    for (x = 0; x < width; x++) {
 	boardmap[y][x] = {
 	    value: "0",
 	    state: "U"
@@ -230,10 +238,10 @@ function onlyUniqueCoord(value, index, self) {
 }
 
 // Get random mine values
-while (mines.length < parseInt(dimensions["mines"],10)) {
+while (mines.length < total_mines) {
     mines.push(new Coordinates(
-	Math.floor(Math.random() * dimensions["width"]),
-	Math.floor(Math.random() * dimensions["height"])
+	Math.floor(Math.random() * width),
+	Math.floor(Math.random() * height)
     ));
     mines = mines.filter(onlyUniqueCoord);
 }
@@ -246,7 +254,7 @@ for (var i = 0; i < mines.length; i++) {
 }
 
 // Assign numbers
-for (var y = 0, count = 0, width = dimensions["width"], height = dimensions["height"]; y < height; y++) {
+for (var y = 0, count = 0, width = width, height = height; y < height; y++) {
     for (var x = 0; x < width; x++, count = 0) {
 	if (boardmap[y][x].value === "M") {
 	    continue;
@@ -279,9 +287,9 @@ for (var y = 0, count = 0, width = dimensions["width"], height = dimensions["hei
     }
 }
 
-for (var y = 0; y < dimensions["height"]; y++) {
+for (var y = 0; y < height; y++) {
     table += "<tr>";
-    for (x = 0; x < dimensions["width"]; x++) {
+    for (x = 0; x < width; x++) {
 	if (boardmap[y][x].value !== "M") {
 	    table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
 	} else if (boardmap[y][x].value === "M") {
@@ -300,5 +308,8 @@ window.onload = function () {
 	tds[i].oncontextmenu = flag;
 	tds[i].onclick = reveal;
     }
-    document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
+    document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString()
+    document.getElementsByName("height")[0].value = dimensions["height"] ? dimensions["height"] : "";
+    document.getElementsByName("width")[0].value = dimensions["width"] ? dimensions["width"] : "";
+    document.getElementsByName("mines")[0].value = dimensions["mines"] ? dimensions["mines"] : "";
 };
