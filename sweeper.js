@@ -6,6 +6,8 @@ var table = "";
 var height = 0;
 var width = 0;
 var total_mines = 0;
+var time = 0;
+var timer = undefined;
 
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
@@ -96,6 +98,7 @@ function reveal (e) {
 		}
 	    }
 	}
+	window.clearInterval(timer);
 	document.getElementById("board").innerHTML += "";
 	document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
 	break;
@@ -156,9 +159,31 @@ function flag (e) {
 		}
 	    }
 	}
+	window.clearInterval(timer);
 	document.getElementById("board").innerHTML += "";
-	document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</br>";
+	document.getElementById("end").innerHTML = 
+"<br><h3>Congratulations! You win! :)</br><input id='leaderboard' type='button' value='Push to leaderboard'>";
+	document.getElementById("leaderboard").onclick = update_leaderboard;
     }
+}
+
+function update_leaderboard () {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+	if (this.readyState == 4 && this.status != 200) {
+	    console.log("There was some error updating the leaderboard.");
+	} else if (this.readyState == 4 && this.status == 200) {
+	    document.getElementById("debug").innerHTML = this.responseText;
+	}
+    };
+    xhttp.open("POST", "ud_leaderboard.php", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify( {
+	time:time,
+	width:width,
+	height:height,
+	mines:total_mines
+    }));
 }
 
 // Test for HTTP-GET variables
@@ -303,6 +328,10 @@ for (var y = 0; y < height; y++) {
 
 window.onload = function () {
     document.getElementById("board").innerHTML = table;
+    timer = window.setInterval( function () {
+	time++;
+	document.getElementById("timer").innerHTML = "Time - " + Math.floor(time/60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
+    }, 1000);
     var tds = document.getElementsByTagName("td");
     for (var i = 0; i < tds.length; i++) {
 	tds[i].oncontextmenu = flag;
