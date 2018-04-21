@@ -35,8 +35,7 @@ function win () {
     }
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
-    document.getElementById("end").innerHTML = 
-        "<br><h3>Congratulations! You win! :)</br><input id='leaderboard' type='button' value='Push to leaderboard'>";
+    document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</h3>\n<input id='leaderboard' type='button' value='Push to leaderboard'>";
     document.getElementById("leaderboard").onclick = update_leaderboard;
 }
 
@@ -173,7 +172,12 @@ function update_leaderboard () {
         if (this.readyState === 4 && this.status !== 200) {
             console.log("There was some error updating the leaderboard.");
         } else if (this.readyState === 4 && this.status === 200) {
-            document.getElementById("debug").innerHTML = "<a href='leaders.html'>Leaderboard</a>";
+            var ld = document.createElement('a');
+            ld.href = "leaders.html";
+            ld.innerHTML = "Leaderboard";
+            document.getElementById("end").appendChild(ld);
+            document.getElementById("end").removeChild(document.getElementById("end").getElementsByTagName("input")[0]);
+
         }};
     xhttp.open("POST", "ud_leaderboard.php", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
