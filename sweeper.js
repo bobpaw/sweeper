@@ -8,6 +8,8 @@ var width = 0;
 var total_mines = 0;
 var time = 0;
 var timer = undefined;
+var clicks = 0;
+var rclicks = 0;
 
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
@@ -22,20 +24,43 @@ function get_cell_xy (object) {
     return coord;
 }
 
+function win () {
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            if (boardmap[y][x].state === "F") {
+                get_cell(x, y).classList.remove("flagged");
+                get_cell(x, y).classList.add("correct");
+            }
+        }
+    }
+    window.clearInterval(timer);
+    document.getElementById("board").innerHTML += "";
+    document.getElementById("end").innerHTML = 
+        "<br><h3>Congratulations! You win! :)</br><input id='leaderboard' type='button' value='Push to leaderboard'>";
+    document.getElementById("leaderboard").onclick = update_leaderboard;
+}
+
+function lose () {
+    window.clearInterval(timer);
+    document.getElementById("board").innerHTML += "";
+    document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
+}
+
 // Reveal a cell
 function reveal (e) {
     if (e instanceof HTMLTableCellElement) {
-	var object = e;
+        var object = e;
     } else if (e instanceof MouseEvent) {
-	var object = e.target;
+        var object = e.target;
+        clicks++;
     } else {
-	return false;
+        return false;
     }
     var coord = get_cell_xy(object);
     if (boardmap[coord.y][coord.x].state === "R") {
-	return;
+        return;
     } else if (boardmap[coord.y][coord.x].state === "U" || boardmap[coord.y][coord.x].state === "F") {
-	boardmap[coord.y][coord.x].state = "R";
+        boardmap[coord.y][coord.x].state = "R";
     }
     object.classList.remove("flagged");
     object.classList.remove("unrevealed");
@@ -44,145 +69,121 @@ function reveal (e) {
     object.removeEventListener("contextmenu", flag);
     switch(boardmap[coord.y][coord.x].value) {
     case "0":
-	object.innerHTML = "0";
-	var x = coord.x;
-	var y = coord.y;
-	if (x < width - 1) {
-	    reveal(get_cell(x + 1, y));
-	}
-	if (x > 0 && y > 0) {
-	    reveal(get_cell(x - 1, y - 1));
-	}
-	if (x > 0) {
-	    reveal(get_cell(x - 1, y));
-	}
-	if (x > 0 && y < height - 1) {
-	    reveal(get_cell(x - 1, y + 1));
-	}
-	if (y < height - 1) {
-	    reveal(get_cell(x, y + 1));
-	}
-	if (x < width - 1 && y > 0) {
-	    reveal(get_cell(x + 1, y - 1));
-	}
-	if (y > 0) {
-	    reveal(get_cell(x, y - 1));
-	}
-	if (x < width - 1 && y < height - 1) {
-	    reveal(get_cell(x + 1, y + 1));
-	}
-	break;
+        object.innerHTML = "";
+        var x = coord.x;
+        var y = coord.y;
+        if (x < width - 1) {
+            reveal(get_cell(x + 1, y));
+        }
+        if (x > 0 && y > 0) {
+            reveal(get_cell(x - 1, y - 1));
+        }
+        if (x > 0) {
+            reveal(get_cell(x - 1, y));
+        }
+        if (x > 0 && y < height - 1) {
+            reveal(get_cell(x - 1, y + 1));
+        }
+        if (y < height - 1) {
+            reveal(get_cell(x, y + 1));
+        }
+        if (x < width - 1 && y > 0) {
+            reveal(get_cell(x + 1, y - 1));
+        }
+        if (y > 0) {
+            reveal(get_cell(x, y - 1));
+        }
+        if (x < width - 1 && y < height - 1) {
+            reveal(get_cell(x + 1, y + 1));
+        }
+        break;
     case "M":
-	object.innerHTML = "M";
-	object.classList.add("wrong");
-	for (var y = 0; y < dimensions["height"]; y++) {
-	    for (var x = 0; x < dimensions["width"]; x++) {
-		if (boardmap[y][x].state === "U") {
-		    reveal(get_cell(x, y));
-		}
-		if (boardmap[y][x].state === "F") {
-		    var correct = false;
-		    for (var i = 0; i < mines.length; i++) {
-			if (mines[i].equals(new Coordinates(x, y))) {
-			    correct = true;
-			    break;
-			}
-		    }
-		    reveal(get_cell(x, y));
-		    get_cell(x, y).innerHTML = "";
-		    if (correct) {
-			get_cell(x,y).classList.remove("flagged");
-			get_cell(x,y).classList.remove("wrong");
-			get_cell(x,y).classList.add("correct");
-		    }
-		}
-	    }
-	}
-	window.clearInterval(timer);
-	document.getElementById("board").innerHTML += "";
-	document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
-	break;
+        object.innerHTML = "M";
+        object.classList.add("wrong");
+        lose();
+        break;
     default:
-	object.innerHTML = boardmap[coord.y][coord.x].value;
-	break;
+        object.innerHTML = boardmap[coord.y][coord.x].value;
+        break;
+    }
+    var allgone = true;
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            if (boardmap[y][x].value !== "M" && boardmap[y][x].state === "U") {
+                allgone = false;
+            }
+        }
+    }
+    if (allgone) {
+        win();
     }
 }
 
 function flag (e) {
     if (e instanceof HTMLTableCellElement) {
-	var object = e;
+        var object = e;
     } else if (e instanceof MouseEvent) {
-	var object = e.target;
-	e.preventDefault();
+        rclicks++;
+        var object = e.target;
+        e.preventDefault();
     } else {
-	return false;
+        return false;
     }
     var coord = get_cell_xy(object);
     if (boardmap[coord.y][coord.x].state === "F") {
-	boardmap[coord.y][coord.x].state = "U";
-	object.classList.remove("flagged");
-	object.classList.add("unrevealed");
-	unflagged++;
+        boardmap[coord.y][coord.x].state = "U";
+        object.classList.remove("flagged");
+        object.classList.add("unrevealed");
+        unflagged++;
     } else if (boardmap[coord.y][coord.x].state === "U") {
-	boardmap[coord.y][coord.x].state = "F";
-	object.classList.remove("unrevealed");
-	object.classList.add("flagged");
-	unflagged--;
+        boardmap[coord.y][coord.x].state = "F";
+        object.classList.remove("unrevealed");
+        object.classList.add("flagged");
+        unflagged--;
     } else if (boardmap[coord.y][coord.x].state === "R") {
     }
     var allgone = true;
     var flags = Array();
     for (var y = 0; y < height; y++) {
-	for (var x = 0; x < width; x++) {
-	    if (boardmap[y][x].state === "F") {
-		flags.push(new Coordinates(x, y));
-	    }
-	}
+        for (var x = 0; x < width; x++) {
+            if (boardmap[y][x].state === "F") {
+                flags.push(new Coordinates(x, y));
+            }
+        }
     }
     if (Math.sign(flags.length - mines.length)) {
-	allgone = false;
+        allgone = false;
     } else {
-	for (var i = 0; i < flags.length; i++) {
-	    if (! flags[i].in_arr(mines)){
-		allgone = false;
-		break;
-	   }
-	}
+        for (var i = 0; i < flags.length; i++) {
+            if (! flags[i].in_arr(mines)){
+                allgone = false;
+                break;
+            }
+        }
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
     if (allgone) {
-	for (var y = 0; y < height; y++) {
-	    for (var x = 0; x < width; x++) {
-		if (boardmap[y][x].state === "F") {
-		    get_cell(x, y).classList.remove("flagged");
-		    get_cell(x, y).classList.add("correct");
-		}
-	    }
-	}
-	window.clearInterval(timer);
-	document.getElementById("board").innerHTML += "";
-	document.getElementById("end").innerHTML = 
-"<br><h3>Congratulations! You win! :)</br><input id='leaderboard' type='button' value='Push to leaderboard'>";
-	document.getElementById("leaderboard").onclick = update_leaderboard;
+        win();
     }
 }
 
 function update_leaderboard () {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-	if (this.readyState == 4 && this.status != 200) {
-	    console.log("There was some error updating the leaderboard.");
-	} else if (this.readyState == 4 && this.status == 200) {
-	    document.getElementById("debug").innerHTML = this.responseText;
-	}
-    };
+        if (this.readyState === 4 && this.status !== 200) {
+            console.log("There was some error updating the leaderboard.");
+        } else if (this.readyState === 4 && this.status === 200) {
+            document.getElementById("debug").innerHTML = "<a href='leaders.html'>Leaderboard</a>";
+        }};
     xhttp.open("POST", "ud_leaderboard.php", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify( {
-	time:time,
-	width:width,
-	height:height,
-	mines:total_mines
+        time: time,
+        width: width,
+        height: height,
+        mines: total_mines,
+        rclicks: rclicks,
+        clicks: clicks
     }));
 }
 
@@ -207,42 +208,42 @@ if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > (width * height)
 
 class Coordinates {
     constructor (x, y) {
-	if (x instanceof Coordinates) {
-	    this.x = x.x;
-	    this.y = x.y;
-	} else {
-	    this.x = typeof x === "string" ? parseInt(x, 10) : x;
-	    this.y = typeof y === "string" ? parseInt(y, 10) : y;
-	}
+        if (x instanceof Coordinates) {
+            this.x = x.x;
+            this.y = x.y;
+        } else {
+            this.x = typeof x === "string" ? parseInt(x, 10) : x;
+            this.y = typeof y === "string" ? parseInt(y, 10) : y;
+        }
     }
     equals (other) {
-	if (other instanceof Coordinates) {
-	    if (this.x === other.x && this.y === other.y) {
-		return true;
-	    }
-	} else {
-	    return false;
-	}
+        if (other instanceof Coordinates) {
+            if (this.x === other.x && this.y === other.y) {
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
     in_arr (array) {
-	for (var i = 0; i < array.length; i++) {
-	    if (array[i].equals(this)) {
-		return true;
-	    }
-	}
-	return false;
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].equals(this)) {
+                return true;
+            }
+        }
+        return false;
     }
     find (array) {
-	for (var i = 0; i < array.length; i++) {
-	    if (array[i].equals(this)) {
-		return i;
-	    }
-	}
-	return -1;
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].equals(this)) {
+                return i;
+            }
+        }
+        return -1;
     }
     copy () {
-	a = new Coordinates(this.x, this.y);
-	return a;
+        a = new Coordinates(this.x, this.y);
+        return a;
     }
 }
 
@@ -250,10 +251,10 @@ class Coordinates {
 for (var y = 0; y < height; y++) {
     boardmap[y] = Array();
     for (x = 0; x < width; x++) {
-	boardmap[y][x] = {
-	    value: "0",
-	    state: "U"
-	}
+        boardmap[y][x] = {
+            value: "0",
+            state: "U"
+        }
     }
 }
 
@@ -265,8 +266,8 @@ function onlyUniqueCoord(value, index, self) {
 // Get random mine values
 while (mines.length < total_mines) {
     mines.push(new Coordinates(
-	Math.floor(Math.random() * width),
-	Math.floor(Math.random() * height)
+        Math.floor(Math.random() * width),
+        Math.floor(Math.random() * height)
     ));
     mines = mines.filter(onlyUniqueCoord);
 }
@@ -281,47 +282,47 @@ for (var i = 0; i < mines.length; i++) {
 // Assign numbers
 for (var y = 0, count = 0, width = width, height = height; y < height; y++) {
     for (var x = 0; x < width; x++, count = 0) {
-	if (boardmap[y][x].value === "M") {
-	    continue;
-	}
-	if (x > 0 && boardmap[y][x - 1].value === "M") {
-	    count++;
-	}
-	if (y > 0 && boardmap[y - 1][x].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && boardmap[y][x + 1].value === "M") {
-	    count++;
-	}
-	if (y < height - 1 && boardmap[y+1][x].value === "M") {
-	    count++;
-	}
-	if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
-	    count++;
-	}
-	if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
-	    count++;
-	}
-	if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
-	    count++;
-	}
-	boardmap[y][x].value = count.toString();
+        if (boardmap[y][x].value === "M") {
+            continue;
+        }
+        if (x > 0 && boardmap[y][x - 1].value === "M") {
+            count++;
+        }
+        if (y > 0 && boardmap[y - 1][x].value === "M") {
+            count++;
+        }
+        if (x < width - 1 && boardmap[y][x + 1].value === "M") {
+            count++;
+        }
+        if (y < height - 1 && boardmap[y+1][x].value === "M") {
+            count++;
+        }
+        if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
+            count++;
+        }
+        if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
+            count++;
+        }
+        if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
+            count++;
+        }
+        if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
+            count++;
+        }
+        boardmap[y][x].value = count.toString();
     }
 }
 
 for (var y = 0; y < height; y++) {
     table += "<tr>";
     for (x = 0; x < width; x++) {
-	if (boardmap[y][x].value !== "M") {
-	    table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
-	} else if (boardmap[y][x].value === "M") {
-	    table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
-	} else {
-	    table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
-	}
+        if (boardmap[y][x].value !== "M") {
+            table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
+        } else if (boardmap[y][x].value === "M") {
+            table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
+        } else {
+            table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
+        }
     }
     table += "</tr>";
 }
@@ -329,13 +330,13 @@ for (var y = 0; y < height; y++) {
 window.onload = function () {
     document.getElementById("board").innerHTML = table;
     timer = window.setInterval( function () {
-	time++;
-	document.getElementById("timer").innerHTML = "Time - " + Math.floor(time/60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
+        time++;
+        document.getElementById("timer").innerHTML = "Time - " + Math.floor(time/60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
     }, 1000);
     var tds = document.getElementsByTagName("td");
     for (var i = 0; i < tds.length; i++) {
-	tds[i].oncontextmenu = flag;
-	tds[i].onclick = reveal;
+        tds[i].oncontextmenu = flag;
+        tds[i].onclick = reveal;
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString()
     document.getElementsByName("height")[0].value = dimensions["height"] ? dimensions["height"] : "";

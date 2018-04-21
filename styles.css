@@ -36,3 +36,18 @@ td.correct {
     background-image: url("flag.png");
     background-color: #00ff00;
 }
+
+div.leaderboard table {
+    border-collapse: collapse;
+    width: 40%;
+}
+
+div.leaderboard th {
+    border: 2px solid black;
+    text-align: left;
+}
+
+div.leaderboard td {
+    border: 2px solid black;
+    text-align: right;
+}

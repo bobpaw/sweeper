@@ -1,2 +1,6 @@
+# Ignore different backups
 *~
 \#*#
+
+# Ignore per-server leaderboards
+leaderboard.json
