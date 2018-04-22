@@ -1,13 +1,18 @@
+table {
+	overflow-x: scroll;
+	max-width: 100%;
+}
+
 table.board {
     border-spacing: 0;
-    border-collapse: collapse;
+	outline: 1px solid black;
 }
 
 table.board td {
     text-align: center;
     width: 20px;
     height: 20px;
-    border: 2px solid black;
+    border: 1px solid black;
 }
 
 td.unrevealed {
@@ -20,10 +25,12 @@ td.revealed {
     background-color: #c6c6c6;
 }
 
-td.flagged {
+td.flagged, td.correct {
     cursor: pointer;
     background-color: #c6c6c6;
     background-image: url("flag.png");
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 td.wrong {
@@ -32,8 +39,6 @@ td.wrong {
 }
 
 td.correct {
-    cursor: default;
-    background-image: url("flag.png");
     background-color: #00ff00;
 }
 
