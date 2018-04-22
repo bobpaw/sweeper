@@ -1,14 +1,14 @@
-table {
-	overflow-x: scroll;
-	max-width: 100%;
-}
-
 table.board {
     border-spacing: 0;
-	outline: 1px solid black;
+    outline: 1px solid black;
+}
+
+table.board tr {
+    white-space: nowrap;
 }
 
 table.board td {
+    display: inline-block;
     text-align: center;
     width: 20px;
     height: 20px;
@@ -29,8 +29,8 @@ td.flagged, td.correct {
     cursor: pointer;
     background-color: #c6c6c6;
     background-image: url("flag.png");
-	background-position: center;
-	background-repeat: no-repeat;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 td.wrong {

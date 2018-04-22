@@ -169,7 +169,9 @@ function flag (e) {
 function update_leaderboard () {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status !== 200) {
+	if (this.status === 405) {
+	    console.log("Couldn't update leaderboard.");
+	} else if (this.readyState === 4 && this.status !== 200) {
             console.log("There was some error updating the leaderboard.");
         } else if (this.readyState === 4 && this.status === 200) {
             var ld = document.createElement('a');
@@ -332,6 +334,11 @@ for (var y = 0; y < height; y++) {
 }
 
 window.onload = function () {
+    if (width * height > 5000) {
+	document.body.insertBefore(document.createElement("p").appendChild(document.createTextNode("This probably won't work. Try a size where width * height is less than 5000")), document.getElementById("board"));
+	document.body.removeChild(document.getElementById("board"));
+	return;
+    }
     document.getElementById("board").innerHTML = table;
     timer = window.setInterval( function () {
         time++;
