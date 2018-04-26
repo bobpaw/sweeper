@@ -11,8 +11,53 @@ var timer = undefined;
 var clicks = 0;
 var rclicks = 0;
 
+class Coordinates {
+    constructor (x, y) {
+        if (x instanceof Coordinates) {
+            this.x = x.x;
+            this.y = x.y;
+        } else {
+            this.x = typeof x === "string" ? parseInt(x, 10) : x;
+            this.y = typeof y === "string" ? parseInt(y, 10) : y;
+        }
+    }
+    equals (other) {
+        if (other instanceof Coordinates) {
+            if (this.x === other.x && this.y === other.y) {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+    in_arr (array) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].equals(this)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    find (array) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].equals(this)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    copy () {
+        a = new Coordinates(this.x, this.y);
+        return a;
+    }
+}
+
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
+    if (x instanceof Coordinates) {
+        y = x.y;
+        x = x.x;
+    }
     return document.getElementById( (x.toString() + "," + y.toString() ) );
 }
 
@@ -47,15 +92,22 @@ function lose () {
 
 // Reveal a cell
 function reveal (e) {
+    var coord;
+    var object;
     if (e instanceof HTMLTableCellElement) {
-        var object = e;
+        object = e;
+        coord = get_cell_xy(object);
     } else if (e instanceof MouseEvent) {
-        var object = e.target;
+        object = e.target;
+        coord = get_cell_xy(object);
         clicks++;
+    } else if (e instanceof Coordinates) {
+        object = get_cell(e);
+        coord = e;
     } else {
         return false;
     }
-    var coord = get_cell_xy(object);
+    coord = get_cell_xy(object);
     if (boardmap[coord.y][coord.x].state === "R") {
         return;
     } else if (boardmap[coord.y][coord.x].state === "U" || boardmap[coord.y][coord.x].state === "F") {
@@ -216,125 +268,110 @@ if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > (width * height)
     total_mines = parseInt(dimensions["mines"], 10);
 }
 
-class Coordinates {
-    constructor (x, y) {
-        if (x instanceof Coordinates) {
-            this.x = x.x;
-            this.y = x.y;
-        } else {
-            this.x = typeof x === "string" ? parseInt(x, 10) : x;
-            this.y = typeof y === "string" ? parseInt(y, 10) : y;
-        }
-    }
-    equals (other) {
-        if (other instanceof Coordinates) {
-            if (this.x === other.x && this.y === other.y) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-    }
-    in_arr (array) {
-        for (var i = 0; i < array.length; i++) {
-            if (array[i].equals(this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    find (array) {
-        for (var i = 0; i < array.length; i++) {
-            if (array[i].equals(this)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    copy () {
-        a = new Coordinates(this.x, this.y);
-        return a;
-    }
-}
-
-// Initialize Board array
-for (var y = 0; y < height; y++) {
-    boardmap[y] = Array();
-    for (x = 0; x < width; x++) {
-        boardmap[y][x] = {
-            value: "0",
-            state: "U"
-        }
-    }
-}
-
 // Filter method
 function onlyUniqueCoord(value, index, self) {
     return value.find(self) === index;
 }
-
-// Get random mine values
-while (mines.length < total_mines) {
-    mines.push(new Coordinates(
-        Math.floor(Math.random() * width),
-        Math.floor(Math.random() * height)
-    ));
-    mines = mines.filter(onlyUniqueCoord);
-}
-
-unflagged = mines.length;
-
-// Place mines
-for (var i = 0; i < mines.length; i++) {
-    boardmap[mines[i].y][mines[i].x].value = "M";
-}
-
-// Assign numbers
-for (var y = 0, count = 0, width = width, height = height; y < height; y++) {
-    for (var x = 0; x < width; x++, count = 0) {
-        if (boardmap[y][x].value === "M") {
-            continue;
-        }
-        if (x > 0 && boardmap[y][x - 1].value === "M") {
-            count++;
-        }
-        if (y > 0 && boardmap[y - 1][x].value === "M") {
-            count++;
-        }
-        if (x < width - 1 && boardmap[y][x + 1].value === "M") {
-            count++;
-        }
-        if (y < height - 1 && boardmap[y+1][x].value === "M") {
-            count++;
-        }
-        if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
-            count++;
-        }
-        if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
-            count++;
-        }
-        if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
-            count++;
-        }
-        if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
-            count++;
-        }
-        boardmap[y][x].value = count.toString();
+function populate_board (e) {
+    var disclude;
+    if (e instanceof Coordinates) {
+        // How it should be
+        disclude = e;
+    } else if (e instanceof HTMLTableCellElement) {
+        disclude = get_cell_xy(disclude);
+    } else if (e instanceof MouseEvent) {
+        disclude = get_cell_xy(e.target);
+    } else {
+        return false;
     }
-}
 
-for (var y = 0; y < height; y++) {
-    table += "<tr>";
-    for (x = 0; x < width; x++) {
-        if (boardmap[y][x].value !== "M") {
-            table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
-        } else if (boardmap[y][x].value === "M") {
-            table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
-        } else {
-            table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
+    // Initialize Board array
+    boardmap = Array();
+    for (var y = 0; y < height; y++) {
+        boardmap[y] = Array();
+        for (x = 0; x < width; x++) {
+            boardmap[y][x] = {
+                value: "0",
+                state: "U"
+            }
         }
     }
-    table += "</tr>";
+
+    // Get random mine values
+    while (mines.length < total_mines) {
+        mines.push(new Coordinates(
+            Math.floor(Math.random() * width),
+            Math.floor(Math.random() * height)
+        ));
+        mines = mines.filter(onlyUniqueCoord);
+        mines = mines.filter(value => { return value !== disclude; });
+    }
+
+    unflagged = mines.length;
+
+    // Place mines
+    for (var i = 0; i < mines.length; i++) {
+        boardmap[mines[i].y][mines[i].x].value = "M";
+    }
+    console.log("Placed mines");
+
+    // Assign numbers
+    for (var y = 0, count = 0; y < height; y++) {
+        for (var x = 0; x < width; x++, count = 0) {
+            if (boardmap[y][x].value === "M") {
+                continue;
+            }
+            if (x > 0 && boardmap[y][x - 1].value === "M") {
+                count++;
+            }
+            if (y > 0 && boardmap[y - 1][x].value === "M") {
+                count++;
+            }
+            if (x < width - 1 && boardmap[y][x + 1].value === "M") {
+                count++;
+            }
+            if (y < height - 1 && boardmap[y+1][x].value === "M") {
+                count++;
+            }
+            if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
+                count++;
+            }
+            if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
+                count++;
+            }
+            if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
+                count++;
+            }
+            if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
+                count++;
+            }
+            boardmap[y][x].value = count.toString();
+        }
+    }
+
+    table = "";
+    for (var y = 0; y < height; y++) {
+        table += "<tr>";
+        for (x = 0; x < width; x++) {
+            if (boardmap[y][x].value !== "M") {
+                table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
+            } else if (boardmap[y][x].value === "M") {
+                table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
+            } else {
+                table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
+            }
+        }
+        table += "</tr>";
+    }
+
+    // Write table to HTML and add event listeners
+    document.getElementById("board").innerHTML = table;
+    var tds = document.getElementsByTagName("td");
+    for (var i = 0; i < tds.length; i++) {
+        tds[i].oncontextmenu = flag;
+        tds[i].onclick = reveal;
+    }
+    reveal(disclude);
 }
 
 window.onload = function () {
@@ -343,17 +380,23 @@ window.onload = function () {
 	document.body.removeChild(document.getElementById("board"));
 	return;
     }
+    for (var y = 0; y < height; y++) {
+        table += "<tr>";
+        for (x = 0; x < width; x++) {
+            table += "<td class='unrevealed' id='" + x + ',' + y + "'></td>";
+        }
+        table += "</tr>";
+    }
     document.getElementById("board").innerHTML = table;
+    var tds = document.getElementsByTagName("td");
+    for (var i = 0; i < tds.length; i++) {
+        tds[i].onclick = populate_board;
+    }
     timer = window.setInterval( function () {
         time++;
         document.getElementById("timer").innerHTML = "Time - " + Math.floor(time/60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
     }, 1000);
-    var tds = document.getElementsByTagName("td");
-    for (var i = 0; i < tds.length; i++) {
-        tds[i].oncontextmenu = flag;
-        tds[i].onclick = reveal;
-    }
-    document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString()
+    document.getElementById("minecount").innerHTML = "Mines: " + total_mines.toString()
     document.getElementsByName("height")[0].value = dimensions["height"] ? dimensions["height"] : "";
     document.getElementsByName("width")[0].value = dimensions["width"] ? dimensions["width"] : "";
     document.getElementsByName("mines")[0].value = dimensions["mines"] ? dimensions["mines"] : "";
