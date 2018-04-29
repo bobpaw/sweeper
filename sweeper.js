@@ -426,7 +426,7 @@ window.onload = function () {
         // restart form
         item = document.createElement("form");
         item.method = "get";
-        item.innerHTML = "Width: <input type='text' name='width'>Height: <input type='text' name='height'>Mines: <input type='text' name='mines'><br><input type='submit' value='New Game'>";
+        item.innerHTML = "Width: <input type='number' name='width'>Height: <input type='number' name='height'>Mines: <input type='number' name='mines'><br><input type='submit' value='New Game'>";
         document.getElementById("content").appendChild(item);
     }
     if (width * height > 5000) {
