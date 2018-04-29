@@ -92,6 +92,10 @@ function lose () {
 
 // Reveal a cell
 function reveal (e) {
+    // If in flag mode run flag instead
+    if (document.getElementById("left").checked) {
+        return flag(e);
+    }
     var coord;
     var object;
     if (e instanceof HTMLTableCellElement) {
@@ -221,13 +225,13 @@ function flag (e) {
 function update_leaderboard () {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-	if (this.status === 405) {
-	    console.log("Couldn't update leaderboard.");
-	    document.getElementById("end").removeChild(document.getElementById("end").getElementsByTagName("input")[0]);
-	    var error_msg = document.createElement("p");
-	    error_msg.innerHTML = "Leaderboard doesn't work here.";
-	    document.getElementById("end").appendChild(error_msg);
-	} else if (this.readyState === 4 && this.status !== 200) {
+        if (this.status === 405) {
+            console.log("Couldn't update leaderboard.");
+            document.getElementById("end").removeChild(document.getElementById("end").getElementsByTagName("input")[0]);
+            var error_msg = document.createElement("p");
+            error_msg.innerHTML = "Leaderboard doesn't work here.";
+            document.getElementById("end").appendChild(error_msg);
+        } else if (this.readyState === 4 && this.status !== 200) {
             console.log("There was some error updating the leaderboard.");
         } else if (this.readyState === 4 && this.status === 200) {
             var ld = document.createElement("a");
@@ -280,6 +284,10 @@ function populate_board (e) {
     } else if (e instanceof HTMLTableCellElement) {
         disclude = get_cell_xy(disclude);
     } else if (e instanceof MouseEvent) {
+        if (e.which === 3) {
+            e.preventDefault();
+            return false;
+        }
         disclude = get_cell_xy(e.target);
     } else {
         return false;
@@ -304,7 +312,7 @@ function populate_board (e) {
             Math.floor(Math.random() * height)
         ));
         mines = mines.filter(onlyUniqueCoord);
-        mines = mines.filter(value => { return value !== disclude; });
+        mines = mines.filter(value => { return ! value.equals(disclude); });
     }
 
     unflagged = mines.length;
@@ -313,7 +321,6 @@ function populate_board (e) {
     for (var i = 0; i < mines.length; i++) {
         boardmap[mines[i].y][mines[i].x].value = "M";
     }
-    console.log("Placed mines");
 
     // Assign numbers
     for (var y = 0, count = 0; y < height; y++) {
@@ -371,14 +378,61 @@ function populate_board (e) {
         tds[i].oncontextmenu = flag;
         tds[i].onclick = reveal;
     }
+    clicks++;
     reveal(disclude);
 }
 
 window.onload = function () {
+
+    // Only create body if JavaScript works
+    {
+        document.getElementById("content").innerHTML = "";
+        var item;
+
+        // right/left click form
+        item = document.createElement("form");
+        item.id = "click_type_form";
+        item.style.border = "1px solid black";
+        item.style.display = "inline-block";
+        item.innerHTML = "<h3 style='display:inline'>Click Mode: </h3><input type='radio' name='clicktype' id='right' value='right' checked><label for='right'>Reveal</label><input type='radio' name='clicktype' id='left' value='left'><label for='left'>Flag</label>";
+        document.getElementById("content").appendChild(item);
+
+        // Add some spacing
+        document.getElementById("content").appendChild(document.createElement("br"));
+        document.getElementById("content").appendChild(document.createElement("br"));
+
+        // board table
+        item = document.createElement("table");
+        item.classList.add("board");
+        item.id = "board";
+        document.getElementById("content").appendChild(item);
+
+        // end div
+        item = document.createElement("div");
+        item.id = "end";
+        document.getElementById("content").appendChild(item);
+
+        // minecount p
+        item = document.createElement("p");
+        item.id = "minecount";
+        document.getElementById("content").appendChild(item);
+
+        // timer p
+        item = document.createElement("p");
+        item.id = "timer";
+        item.appendChild(document.createTextNode("Time - 0:00"));
+        document.getElementById("content").appendChild(item);
+
+        // restart form
+        item = document.createElement("form");
+        item.method = "get";
+        item.innerHTML = "Width: <input type='text' name='width'>Height: <input type='text' name='height'>Mines: <input type='text' name='mines'><br><input type='submit' value='New Game'>";
+        document.getElementById("content").appendChild(item);
+    }
     if (width * height > 5000) {
-	document.body.insertBefore(document.createElement("p").appendChild(document.createTextNode("This probably won't work. Try a size where width * height is less than 5000")), document.getElementById("board"));
-	document.body.removeChild(document.getElementById("board"));
-	return;
+        document.body.insertBefore(document.createElement("p").appendChild(document.createTextNode("This probably won't work. Try a size where width * height is less than 5000")), document.getElementById("board"));
+        document.body.removeChild(document.getElementById("board"));
+        return;
     }
     for (var y = 0; y < height; y++) {
         table += "<tr>";
@@ -391,6 +445,7 @@ window.onload = function () {
     var tds = document.getElementsByTagName("td");
     for (var i = 0; i < tds.length; i++) {
         tds[i].onclick = populate_board;
+        tds[i].oncontextmenu = populate_board;
     }
     timer = window.setInterval( function () {
         time++;
