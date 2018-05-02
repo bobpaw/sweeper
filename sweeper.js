@@ -80,7 +80,7 @@ function win () {
     }
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
-    document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</h3>\n<input id='leaderboard' type='button' value='Push to leaderboard'>";
+    document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</h3>\nName: <input id='name' type='text'><br><input id='leaderboard' type='button' value='Push to leaderboard'>";
     document.getElementById("leaderboard").onclick = update_leaderboard;
 }
 
@@ -175,9 +175,8 @@ function reveal (e) {
 }
 
 function flag (e) {
-    if (e instanceof HTMLTableCellElement) {
-        var object = e;
-    } else if (e instanceof MouseEvent) {
+    // Only works for clicks
+    if (e instanceof MouseEvent) {
         rclicks++;
         var object = e.target;
         e.preventDefault();
@@ -237,13 +236,15 @@ function update_leaderboard () {
             var ld = document.createElement("a");
             ld.href = "leaders.html";
             ld.innerHTML = "Leaderboard";
+            while (document.getElementById("end").firstChild) {
+                document.getElementById("end").removeChild(document.getElementById("end").firstChild);
+            }
             document.getElementById("end").appendChild(ld);
-            document.getElementById("end").removeChild(document.getElementById("end").getElementsByTagName("input")[0]);
-
         }};
     xhttp.open("POST", "ud_leaderboard.php", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(JSON.stringify( {
+        name: document.getElementById("name").value,
         time: time,
         width: width,
         height: height,

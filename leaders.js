@@ -1,9 +1,18 @@
+function sort_scores (a, b) {
+    if (typeof a.time !== "undefined" && typeof b.time !== "undefined") {
+        return a.time - b.time;
+    } else {
+        return 0;
+    }
+}
+
 function create_table (scores) {
     var stuff = "<table><tr>";
     for (var part in scores[0]) {
         stuff += "<th>" + part.replace(/\b\w/g, function (x) { return x.toUpperCase(); }) + "</th>";
     }
     stuff += "</tr>";
+    scores.sort(sort_scores);
     for (var i = 0; i < scores.length; i++) {
 	stuff += "<tr>";
 	for (var part in scores[i]) {
