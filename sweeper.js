@@ -226,7 +226,9 @@ function update_leaderboard () {
     xhttp.onreadystatechange = function () {
         if (this.status === 405) {
             console.log("Couldn't update leaderboard.");
-            document.getElementById("end").removeChild(document.getElementById("end").getElementsByTagName("input")[0]);
+            while (document.getElementById("end").firstChild) {
+                document.getElementById("end").removeChild(document.getElementById("end").firstChild);
+            }
             var error_msg = document.createElement("p");
             error_msg.innerHTML = "Leaderboard doesn't work here.";
             document.getElementById("end").appendChild(error_msg);
