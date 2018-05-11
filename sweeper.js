@@ -10,6 +10,8 @@ var time = 0;
 var timer = undefined;
 var clicks = 0;
 var rclicks = 0;
+var score_3bv = 0;
+var surrounding;
 
 class Coordinates {
     constructor (x, y) {
@@ -52,6 +54,22 @@ class Coordinates {
     }
 }
 
+class Cell {
+    constructor (value, status, marked, locationx, locationy) {
+        if (value instanceof Cell) {
+            this.value = value.value;
+            this.status = value.status;
+            this.marked = value.marked;
+            this.loc = value.loc;
+            return;
+        }
+        this.loc = new Coordinates(locationx, locationy);
+        this.value = value;
+        this.status = status;
+        this.marked = marked;
+    }
+}
+
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
     if (x instanceof Coordinates) {
@@ -88,6 +106,63 @@ function lose () {
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
     document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
+}
+
+function count3BV () {
+    var score_3bv = 0;
+    var cells = new Array();
+    for (var y = 0; y < height; y++) {
+        Array.prototype.push.apply(cells, boardmap[y].map((c, x) => new Cell(c.value, c.status, false, x, y)));
+    }
+    for (i in cells.filter(x => x.value === "0")) {
+        if (cells[i].marked) {
+            continue;
+        }
+        cells[i].marked = true;
+        score_3bv++;
+        floodFillMark(cells[i]);
+    }
+    for (i in cells.filter(x => { return !x.marked && x.value !== "M" })) {
+        score_3bv++;
+    }
+    return score_3bv;
+}
+
+function floodFillMark (cell) {
+    surrounding = new Array();
+    console.log(cell);
+    if (cell.loc.x > 0) {
+        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.status, cell.loc.x - 1, cell.loc.y));
+        if (cell.loc.y > 0) {
+            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x - 1, cell.loc.y - 1));
+        }
+        if (cell.loc.y < height - 1) {
+            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x - 1, cell.loc.y + 1));
+        }
+    }
+    if (cell.loc.x < width - 1) {
+        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y));
+        if (cell.loc.y > 0) {
+            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y - 1));
+        }
+        if (cell.loc.y < height - 1) {
+            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y + 1));
+        }
+    }
+    if (cell.loc.y > 0) {
+        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x, cell.loc.y - 1));
+    }
+    if (cell.loc.y < height - 1) {
+        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x, cell.loc.y + 1));
+    }
+    for (i in surrounding) {
+        var this_cell = surrounding[i];
+        console.log(this_cell);
+        boardmap[this_cell.loc.y][this_cell.loc.x].marked = true;
+        if (boardmap[this_cell.loc.y][this_cell.loc.x].value === "0") {
+            floodFillMark(this_cell);
+        }
+    }
 }
 
 // Reveal a cell
@@ -169,7 +244,7 @@ function reveal (e) {
             }
         }
     }
-    if (allgone) {
+    if (allgone === true) {
         win();
     }
 }
@@ -196,29 +271,7 @@ function flag (e) {
         unflagged--;
     } else if (boardmap[coord.y][coord.x].state === "R") {
     }
-    var allgone = true;
-    var flags = Array();
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].state === "F") {
-                flags.push(new Coordinates(x, y));
-            }
-        }
-    }
-    if (Math.sign(flags.length - mines.length)) {
-        allgone = false;
-    } else {
-        for (var i = 0; i < flags.length; i++) {
-            if (! flags[i].in_arr(mines)){
-                allgone = false;
-                break;
-            }
-        }
-    }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
-    if (allgone) {
-        win();
-    }
 }
 
 function update_leaderboard () {
@@ -252,7 +305,8 @@ function update_leaderboard () {
         height: height,
         mines: total_mines,
         rclicks: rclicks,
-        clicks: clicks
+        clicks: clicks,
+        board_score: count3BV()
     }));
 }
 
@@ -301,10 +355,7 @@ function populate_board (e) {
     for (var y = 0; y < height; y++) {
         boardmap[y] = Array();
         for (x = 0; x < width; x++) {
-            boardmap[y][x] = {
-                value: "0",
-                state: "U"
-            }
+            boardmap[y][x] = new Cell ("0", "U", false, x, y);
         }
     }
 
