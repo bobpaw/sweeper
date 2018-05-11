@@ -7,11 +7,29 @@
     <link type="text/css" rel="stylesheet" href="styles.css">
     <script type="application/javascript" src="http-get.js"></script>
     <script type="application/javascript" src="sweeper.js"></script>
+    <script type="application/javascript">
+      function hide_collapsable (e) {
+        e.target.onclick = function (e) { window.setTimeout(show_collapsable.bind(null, e), 20); };
+        document.getElementById("rules").innerHTML = "";
+      }
+
+      function show_collapsable (e) {
+        e.target.onclick = function (e) { window.setTimeout(hide_collapsable.bind(null, e), 20); };
+        document.getElementById("rules").innerHTML = "<iframe src='rules.html'>";
+      }
+    </script>
   </head>
   <body>
     <h1>Minesweeper</h1>
     <div id="content">
       <p>I'm sorry, JavaScript is required.</p>
     </div>
+    <br>
+    <h1 id="rules-clickable">Rules</h1>
+    <div id="rules">
+    </div>
+    <script type="application/javascript">
+      document.getElementById("rules-clickable").onclick = function (e) { window.setTimeout(show_collapsable.bind(null, e), 20); };
+    </script>
   </body>
 </html>
