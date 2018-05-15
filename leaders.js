@@ -1,6 +1,6 @@
 // Just assume it's a correct object type
-function by_time (a, b) {
-    return a.time - b.time;
+function by_score (a, b) {
+    return a.score / a.time - b.score / b.time;
 }
 
 function create_table (scores) {
@@ -9,7 +9,7 @@ function create_table (scores) {
         stuff += "<th>" + part.replace(/\b\w/g, function (x) { return x.toUpperCase(); }) + "</th>";
     }
     stuff += "</tr>";
-    scores.sort(by_time);
+    scores.sort(by_score);
     for (var i = 0; i < scores.length; i++) {
         stuff += "<tr>";
         for (var part in scores[i]) {

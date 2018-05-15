@@ -75,6 +75,9 @@ function get_cell (x, y) {
     if (x instanceof Coordinates) {
         y = x.y;
         x = x.x;
+    } else if (x instanceof Cell) {
+	y = x.loc.y;
+	x = x.loc.x;
     }
     return document.getElementById( (x.toString() + "," + y.toString() ) );
 }
@@ -90,7 +93,7 @@ function get_cell_xy (object) {
 function win () {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].state === "F") {
+            if (boardmap[y][x].status === "F") {
                 get_cell(x, y).classList.remove("flagged");
                 get_cell(x, y).classList.add("correct");
             }
@@ -120,7 +123,7 @@ function count3BV () {
         }
         cells[i].marked = true;
         score_3bv++;
-        floodFillMark(cells[i]);
+        floodFillMark(new Coordinates(cells[i].loc.x, cells[i].loc.y));
     }
     for (i in cells.filter(x => { return !x.marked && x.value !== "M" })) {
         score_3bv++;
@@ -129,39 +132,60 @@ function count3BV () {
 }
 
 function floodFillMark (cell) {
-    surrounding = new Array();
-    console.log(cell);
-    if (cell.loc.x > 0) {
-        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.status, cell.loc.x - 1, cell.loc.y));
-        if (cell.loc.y > 0) {
-            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x - 1, cell.loc.y - 1));
-        }
-        if (cell.loc.y < height - 1) {
-            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x - 1, cell.loc.y + 1));
-        }
+    if (cell instanceof Coordinates) {
+	var x = cell.x;
+	var y = cell.y;
+    } else if (cell instanceof Cell) {
+	var x = cell.loc.x;
+	var y = cell.loc.y;
     }
-    if (cell.loc.x < width - 1) {
-        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y));
-        if (cell.loc.y > 0) {
-            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y - 1));
-        }
-        if (cell.loc.y < height - 1) {
-            surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x + 1, cell.loc.y + 1));
-        }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
     }
-    if (cell.loc.y > 0) {
-        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x, cell.loc.y - 1));
+    if (x > 0 && y > 0) {
+	boardmap[y - 1][x - 1].marked = true;
+	if (boardmap[y - 1][x - 1].value === "0") {
+	    floodFillMark(boardmap[y - 1][x - 1]);
+	}
     }
-    if (cell.loc.y < height - 1) {
-        surrounding.push(new Cell(cell.value, cell.status, cell.marked, cell.loc.x, cell.loc.y + 1));
+    if (x > 0 && y < height - 1) {
+	boardmap[y + 1][x - 1].marked = true;
+	if (boardmap[y + 1][x - 1].value === "0") {
+	    floodFillMark(boardmap[y + 1][x - 1]);
+	}
     }
-    for (i in surrounding) {
-        var this_cell = surrounding[i];
-        console.log(this_cell);
-        boardmap[this_cell.loc.y][this_cell.loc.x].marked = true;
-        if (boardmap[this_cell.loc.y][this_cell.loc.x].value === "0") {
-            floodFillMark(this_cell);
-        }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
+    }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
+    }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
+    }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
+    }
+    if (x > 0) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
     }
 }
 
@@ -183,14 +207,17 @@ function reveal (e) {
     } else if (e instanceof Coordinates) {
         object = get_cell(e);
         coord = e;
+    } else if (e instanceof Cell) {
+	object = get_cell(e);
+	coord = e.loc;
     } else {
         return false;
     }
     coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].state === "R") {
+    if (boardmap[coord.y][coord.x].status === "R") {
         return;
-    } else if (boardmap[coord.y][coord.x].state === "U" || boardmap[coord.y][coord.x].state === "F") {
-        boardmap[coord.y][coord.x].state = "R";
+    } else if (boardmap[coord.y][coord.x].status === "U" || boardmap[coord.y][coord.x].status === "F") {
+        boardmap[coord.y][coord.x].status = "R";
     }
     object.classList.remove("flagged");
     object.classList.remove("unrevealed");
@@ -239,7 +266,7 @@ function reveal (e) {
     var allgone = true;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M" && boardmap[y][x].state === "U") {
+            if (boardmap[y][x].value !== "M" && boardmap[y][x].status === "U") {
                 allgone = false;
             }
         }
@@ -259,17 +286,17 @@ function flag (e) {
         return false;
     }
     var coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].state === "F") {
-        boardmap[coord.y][coord.x].state = "U";
+    if (boardmap[coord.y][coord.x].status === "F") {
+        boardmap[coord.y][coord.x].status = "U";
         object.classList.remove("flagged");
         object.classList.add("unrevealed");
         unflagged++;
-    } else if (boardmap[coord.y][coord.x].state === "U") {
-        boardmap[coord.y][coord.x].state = "F";
+    } else if (boardmap[coord.y][coord.x].status === "U") {
+        boardmap[coord.y][coord.x].status = "F";
         object.classList.remove("unrevealed");
         object.classList.add("flagged");
         unflagged--;
-    } else if (boardmap[coord.y][coord.x].state === "R") {
+    } else if (boardmap[coord.y][coord.x].status === "R") {
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
 }
