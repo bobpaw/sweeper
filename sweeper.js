@@ -10,8 +10,6 @@ var time = 0;
 var timer = undefined;
 var clicks = 0;
 var rclicks = 0;
-var score_3bv = 0;
-var surrounding;
 
 class Coordinates {
     constructor (x, y) {
@@ -70,6 +68,9 @@ class Cell {
     }
 }
 
+// TODO(aiden.woodruff@gmail.com): Write function to return surrounding 
+// cells (both 2d arrays and 1d)
+
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
     if (x instanceof Coordinates) {
@@ -113,10 +114,7 @@ function lose () {
 
 function count3BV () {
     var score_3bv = 0;
-    var cells = new Array();
-    for (var y = 0; y < height; y++) {
-        Array.prototype.push.apply(cells, boardmap[y].map((c, x) => new Cell(c.value, c.status, false, x, y)));
-    }
+    var cells = [].concat.apply([], boardmap);
     for (i in cells.filter(x => x.value === "0")) {
         if (cells[i].marked) {
             continue;
@@ -125,7 +123,7 @@ function count3BV () {
         score_3bv++;
         floodFillMark(new Coordinates(cells[i].loc.x, cells[i].loc.y));
     }
-    for (i in cells.filter(x => { return !x.marked && x.value !== "M" })) {
+    for (i in [].concat.apply([], boardmap).filter(x => { return !x.marked && x.value !== "M" })) {
         score_3bv++;
     }
     return score_3bv;
