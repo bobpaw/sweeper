@@ -137,52 +137,52 @@ function floodFillMark (cell) {
 	var x = cell.loc.x;
 	var y = cell.loc.y;
     }
-    if (x > 0) {
+    if (x > 0 && !boardmap[y][x - 1].marked) {
 	boardmap[y][x - 1].marked = true;
 	if (boardmap[y][x - 1].value === "0") {
 	    floodFillMark(boardmap[y][x - 1]);
 	}
     }
-    if (x > 0 && y > 0) {
+    if (x > 0 && y > 0 && !boardmap[y - 1][x - 1].marked) {
 	boardmap[y - 1][x - 1].marked = true;
 	if (boardmap[y - 1][x - 1].value === "0") {
 	    floodFillMark(boardmap[y - 1][x - 1]);
 	}
     }
-    if (x > 0 && y < height - 1) {
+    if (x > 0 && y < height - 1 && !boardmap[y + 1][x - 1].marked) {
 	boardmap[y + 1][x - 1].marked = true;
 	if (boardmap[y + 1][x - 1].value === "0") {
 	    floodFillMark(boardmap[y + 1][x - 1]);
 	}
     }
-    if (x > 0) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
+    if (y < height - 1 && !boardmap[y + 1][x].marked) {
+	boardmap[y + 1][x].marked = true;
+	if (boardmap[y + 1][x].value === "0") {
+	    floodFillMark(boardmap[y + 1][x]);
 	}
     }
-    if (x > 0) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
+    if (x < width - 1 && y < height - 1 && !boardmap[y + 1][x + 1].marked) {
+	boardmap[y + 1][x + 1].marked = true;
+	if (boardmap[y + 1][x + 1].value === "0") {
+	    floodFillMark(boardmap[y + 1][x + 1]);
 	}
     }
-    if (x > 0) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
+    if (x < width - 1 && !boardmap[y][x + 1].marked) {
+	boardmap[y][x + 1].marked = true;
+	if (boardmap[y][x + 1].value === "0") {
+	    floodFillMark(boardmap[y][x + 1]);
 	}
     }
-    if (x > 0) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
+    if (x < width - 1 && y > 0 && !boardmap[y - 1][x + 1].marked) {
+	boardmap[y - 1][x + 1].marked = true;
+	if (boardmap[y - 1][x + 1].value === "0") {
+	    floodFillMark(boardmap[y - 1][x + 1]);
 	}
     }
-    if (x > 0) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
+    if (y > 0 && !boardmap[y - 1][x].marked) {
+	boardmap[y - 1][x].marked = true;
+	if (boardmap[y - 1][x].value === "0") {
+	    floodFillMark(boardmap[y - 1][x]);
 	}
     }
 }
