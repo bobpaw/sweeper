@@ -1,9 +1,6 @@
-function sort_scores (a, b) {
-    if (typeof a.time !== "undefined" && typeof b.time !== "undefined") {
-        return a.time - b.time;
-    } else {
-        return 0;
-    }
+// Just assume it's a correct object type
+function by_score (a, b) {
+    return a.score / a.time - b.score / b.time;
 }
 
 function create_table (scores) {
@@ -12,21 +9,21 @@ function create_table (scores) {
         stuff += "<th>" + part.replace(/\b\w/g, function (x) { return x.toUpperCase(); }) + "</th>";
     }
     stuff += "</tr>";
-    scores.sort(sort_scores);
+    scores.sort(by_score);
     for (var i = 0; i < scores.length; i++) {
-	stuff += "<tr>";
-	for (var part in scores[i]) {
-	    if (part === "time") {
-	      if (scores[i][part] % 60 < 10) {
-	        stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":0" + (scores[i][part] % 60).toString() + "</td>";
-	      } else {
-	        stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":" + (scores[i][part] % 60).toString() + "</td>";
-	      }
-	    } else {
-	      stuff += "<td>" + scores[i][part].toString() + "</td>";
-	    }
-	}
-	stuff += "</tr>";
+        stuff += "<tr>";
+        for (var part in scores[i]) {
+            if (part === "time") {
+                if (scores[i][part] % 60 < 10) {
+                    stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":0" + (scores[i][part] % 60).toString() + "</td>";
+                } else {
+                    stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":" + (scores[i][part] % 60).toString() + "</td>";
+                }
+            } else {
+                stuff += "<td>" + scores[i][part].toString() + "</td>";
+            }
+        }
+        stuff += "</tr>";
     }
     document.getElementById("content").innerHTML = stuff;
 }
@@ -35,10 +32,10 @@ window.onload = function () {
     var scores = Array();
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-	if (this.readyState === 4 && this.status === 200) {
-	    scores = JSON.parse(this.responseText);
-	    create_table(scores);
-	}
+        if (this.readyState === 4 && this.status === 200) {
+            scores = JSON.parse(this.responseText);
+            create_table(scores);
+        }
     };
     xhttp.open("GET", "leaderboard.json");
     xhttp.send();

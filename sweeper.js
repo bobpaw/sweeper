@@ -52,11 +52,33 @@ class Coordinates {
     }
 }
 
+class Cell {
+    constructor (value, status, marked, locationx, locationy) {
+        if (value instanceof Cell) {
+            this.value = value.value;
+            this.status = value.status;
+            this.marked = value.marked;
+            this.loc = value.loc;
+            return;
+        }
+        this.loc = new Coordinates(locationx, locationy);
+        this.value = value;
+        this.status = status;
+        this.marked = marked;
+    }
+}
+
+// TODO(aiden.woodruff@gmail.com): Write function to return surrounding 
+// cells (both 2d arrays and 1d)
+
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
     if (x instanceof Coordinates) {
         y = x.y;
         x = x.x;
+    } else if (x instanceof Cell) {
+	y = x.loc.y;
+	x = x.loc.x;
     }
     return document.getElementById( (x.toString() + "," + y.toString() ) );
 }
@@ -72,7 +94,7 @@ function get_cell_xy (object) {
 function win () {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].state === "F") {
+            if (boardmap[y][x].status === "F") {
                 get_cell(x, y).classList.remove("flagged");
                 get_cell(x, y).classList.add("correct");
             }
@@ -88,6 +110,81 @@ function lose () {
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
     document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
+}
+
+function count3BV () {
+    var score_3bv = 0;
+    var cells = [].concat.apply([], boardmap);
+    for (i in cells.filter(x => x.value === "0")) {
+        if (cells[i].marked) {
+            continue;
+        }
+        cells[i].marked = true;
+        score_3bv++;
+        floodFillMark(new Coordinates(cells[i].loc.x, cells[i].loc.y));
+    }
+    for (i in [].concat.apply([], boardmap).filter(x => { return !x.marked && x.value !== "M" })) {
+        score_3bv++;
+    }
+    return score_3bv;
+}
+
+function floodFillMark (cell) {
+    if (cell instanceof Coordinates) {
+	var x = cell.x;
+	var y = cell.y;
+    } else if (cell instanceof Cell) {
+	var x = cell.loc.x;
+	var y = cell.loc.y;
+    }
+    if (x > 0 && !boardmap[y][x - 1].marked) {
+	boardmap[y][x - 1].marked = true;
+	if (boardmap[y][x - 1].value === "0") {
+	    floodFillMark(boardmap[y][x - 1]);
+	}
+    }
+    if (x > 0 && y > 0 && !boardmap[y - 1][x - 1].marked) {
+	boardmap[y - 1][x - 1].marked = true;
+	if (boardmap[y - 1][x - 1].value === "0") {
+	    floodFillMark(boardmap[y - 1][x - 1]);
+	}
+    }
+    if (x > 0 && y < height - 1 && !boardmap[y + 1][x - 1].marked) {
+	boardmap[y + 1][x - 1].marked = true;
+	if (boardmap[y + 1][x - 1].value === "0") {
+	    floodFillMark(boardmap[y + 1][x - 1]);
+	}
+    }
+    if (y < height - 1 && !boardmap[y + 1][x].marked) {
+	boardmap[y + 1][x].marked = true;
+	if (boardmap[y + 1][x].value === "0") {
+	    floodFillMark(boardmap[y + 1][x]);
+	}
+    }
+    if (x < width - 1 && y < height - 1 && !boardmap[y + 1][x + 1].marked) {
+	boardmap[y + 1][x + 1].marked = true;
+	if (boardmap[y + 1][x + 1].value === "0") {
+	    floodFillMark(boardmap[y + 1][x + 1]);
+	}
+    }
+    if (x < width - 1 && !boardmap[y][x + 1].marked) {
+	boardmap[y][x + 1].marked = true;
+	if (boardmap[y][x + 1].value === "0") {
+	    floodFillMark(boardmap[y][x + 1]);
+	}
+    }
+    if (x < width - 1 && y > 0 && !boardmap[y - 1][x + 1].marked) {
+	boardmap[y - 1][x + 1].marked = true;
+	if (boardmap[y - 1][x + 1].value === "0") {
+	    floodFillMark(boardmap[y - 1][x + 1]);
+	}
+    }
+    if (y > 0 && !boardmap[y - 1][x].marked) {
+	boardmap[y - 1][x].marked = true;
+	if (boardmap[y - 1][x].value === "0") {
+	    floodFillMark(boardmap[y - 1][x]);
+	}
+    }
 }
 
 // Reveal a cell
@@ -108,14 +205,17 @@ function reveal (e) {
     } else if (e instanceof Coordinates) {
         object = get_cell(e);
         coord = e;
+    } else if (e instanceof Cell) {
+	object = get_cell(e);
+	coord = e.loc;
     } else {
         return false;
     }
     coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].state === "R") {
+    if (boardmap[coord.y][coord.x].status === "R") {
         return;
-    } else if (boardmap[coord.y][coord.x].state === "U" || boardmap[coord.y][coord.x].state === "F") {
-        boardmap[coord.y][coord.x].state = "R";
+    } else if (boardmap[coord.y][coord.x].status === "U" || boardmap[coord.y][coord.x].status === "F") {
+        boardmap[coord.y][coord.x].status = "R";
     }
     object.classList.remove("flagged");
     object.classList.remove("unrevealed");
@@ -164,12 +264,12 @@ function reveal (e) {
     var allgone = true;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M" && boardmap[y][x].state === "U") {
+            if (boardmap[y][x].value !== "M" && boardmap[y][x].status === "U") {
                 allgone = false;
             }
         }
     }
-    if (allgone) {
+    if (allgone === true) {
         win();
     }
 }
@@ -184,41 +284,19 @@ function flag (e) {
         return false;
     }
     var coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].state === "F") {
-        boardmap[coord.y][coord.x].state = "U";
+    if (boardmap[coord.y][coord.x].status === "F") {
+        boardmap[coord.y][coord.x].status = "U";
         object.classList.remove("flagged");
         object.classList.add("unrevealed");
         unflagged++;
-    } else if (boardmap[coord.y][coord.x].state === "U") {
-        boardmap[coord.y][coord.x].state = "F";
+    } else if (boardmap[coord.y][coord.x].status === "U") {
+        boardmap[coord.y][coord.x].status = "F";
         object.classList.remove("unrevealed");
         object.classList.add("flagged");
         unflagged--;
-    } else if (boardmap[coord.y][coord.x].state === "R") {
-    }
-    var allgone = true;
-    var flags = Array();
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].state === "F") {
-                flags.push(new Coordinates(x, y));
-            }
-        }
-    }
-    if (Math.sign(flags.length - mines.length)) {
-        allgone = false;
-    } else {
-        for (var i = 0; i < flags.length; i++) {
-            if (! flags[i].in_arr(mines)){
-                allgone = false;
-                break;
-            }
-        }
+    } else if (boardmap[coord.y][coord.x].status === "R") {
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
-    if (allgone) {
-        win();
-    }
 }
 
 function update_leaderboard () {
@@ -252,7 +330,8 @@ function update_leaderboard () {
         height: height,
         mines: total_mines,
         rclicks: rclicks,
-        clicks: clicks
+        clicks: clicks,
+        board_score: count3BV()
     }));
 }
 
@@ -301,10 +380,7 @@ function populate_board (e) {
     for (var y = 0; y < height; y++) {
         boardmap[y] = Array();
         for (x = 0; x < width; x++) {
-            boardmap[y][x] = {
-                value: "0",
-                state: "U"
-            }
+            boardmap[y][x] = new Cell ("0", "U", false, x, y);
         }
     }
 
