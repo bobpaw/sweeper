@@ -68,8 +68,25 @@ class Cell {
     }
 }
 
-// TODO(aiden.woodruff@gmail.com): Write function to return surrounding 
-// cells (both 2d arrays and 1d)
+function surrounding (cell, cell_list) {
+    if (cell instanceof Coordinates) {
+	var x = cell.x;
+	var y = cell.y;
+    } else if (cell instanceof Cell) {
+	var x = cell.loc.x;
+	var y = cell.loc.y;
+    }
+    var surrounding = Array();
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x - 1 && c.y === cell.y }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x - 1 && c.y === cell.y + 1 }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x - 1 && c.y === cell.y - 1 }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x && c.y === cell.y - 1 }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x + 1 && c.y === cell.y - 1 }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x + 1 && c.y === cell.y }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x + 1 && c.y === cell.y  + 1 }));
+    surrounding.push.apply(surrounding, cell_list.filter(c => {return c.x === cell.x && c.y === cell.y + 1 }));
+    surrounding.filter(x => typeof x !== "undefined");
+}
 
 // Return cell object from x and y coordinates
 function get_cell (x, y) {
@@ -193,40 +210,42 @@ function reveal (e) {
     if (document.getElementById("left").checked) {
         return flag(e);
     }
-    var coord;
+    var cell;
     var object;
-    if (e instanceof HTMLTableCellElement) {
-        object = e;
-        coord = get_cell_xy(object);
-    } else if (e instanceof MouseEvent) {
+    if (e instanceof MouseEvent) {
         object = e.target;
-        coord = get_cell_xy(object);
+        var coord = get_cell_xy(object);
+        cell = boardmap.filter(x => {return x.loc.x === coord.x && x.loc.y === coord.y})[0];
         clicks++;
-    } else if (e instanceof Coordinates) {
-        object = get_cell(e);
-        coord = e;
+    } else if (e instanceof HTMLTableCellElement) {
+        object = e;
+        var coord = get_cell_xy(e);
+        cell = boardmap.filter(x => {return x.loc.x === coord.x && x.loc.y === coord.y})[0];
     } else if (e instanceof Cell) {
 	object = get_cell(e);
-	coord = e.loc;
+	cell = e;
     } else {
         return false;
     }
+    if (typeof cell === "undefined") {
+        return false;
+    }
     coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].status === "R") {
+    if (cell.status === "R") {
         return;
-    } else if (boardmap[coord.y][coord.x].status === "U" || boardmap[coord.y][coord.x].status === "F") {
-        boardmap[coord.y][coord.x].status = "R";
+    } else if (cell.status === "U" || cell.status === "F") {
+        cell.status = "R";
     }
     object.classList.remove("flagged");
     object.classList.remove("unrevealed");
     object.classList.add("revealed");
     object.removeEventListener("click", reveal);
     object.removeEventListener("contextmenu", flag);
-    switch(boardmap[coord.y][coord.x].value) {
+    switch(cell.value) {
     case "0":
         object.innerHTML = "";
-        var x = coord.x;
-        var y = coord.y;
+        var x = cell.loc.x;
+        var y = cell.loc.y;
         if (x < width - 1) {
             reveal(get_cell(x + 1, y));
         }
@@ -258,18 +277,10 @@ function reveal (e) {
         lose();
         break;
     default:
-        object.innerHTML = boardmap[coord.y][coord.x].value;
+        object.innerHTML = cell.value;
         break;
     }
-    var allgone = true;
-    for (var y = 0; y < height; y++) {
-        for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M" && boardmap[y][x].status === "U") {
-                allgone = false;
-            }
-        }
-    }
-    if (allgone === true) {
+    if (boardmap.filter(x => {return x.value !== "M" && x.status === "U"}).length === 0) {
         win();
     }
 }
@@ -283,18 +294,19 @@ function flag (e) {
     } else {
         return false;
     }
-    var coord = get_cell_xy(object);
-    if (boardmap[coord.y][coord.x].status === "F") {
-        boardmap[coord.y][coord.x].status = "U";
+    var cell = get_cell_xy(object);
+    cell = boardmap.filter(x => { return x.loc.x === cell.x && x.loc.y === cell.y });
+    if (cell.status === "F") {
+        cell.status = "U";
         object.classList.remove("flagged");
         object.classList.add("unrevealed");
         unflagged++;
-    } else if (boardmap[coord.y][coord.x].status === "U") {
-        boardmap[coord.y][coord.x].status = "F";
+    } else if (cell.status === "U") {
+        cell.status = "F";
         object.classList.remove("unrevealed");
         object.classList.add("flagged");
         unflagged--;
-    } else if (boardmap[coord.y][coord.x].status === "R") {
+    } else if (cell.status === "R") {
     }
     document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
 }
@@ -378,9 +390,8 @@ function populate_board (e) {
     // Initialize Board array
     boardmap = Array();
     for (var y = 0; y < height; y++) {
-        boardmap[y] = Array();
-        for (x = 0; x < width; x++) {
-            boardmap[y][x] = new Cell ("0", "U", false, x, y);
+        for (var x = 0; x < width; x++) {
+            boardmap.push(new Cell ("0", "U", false, x, y));
         }
     }
 
@@ -436,12 +447,17 @@ function populate_board (e) {
     }
 
     table = "";
-    for (var y = 0; y < height; y++) {
+    for (var y = 0, thiscell; y < height; y++) {
         table += "<tr>";
         for (x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M") {
-                table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
-            } else if (boardmap[y][x].value === "M") {
+            thiscell = boardmap.filter(c => { return c.loc.x === x && c.loc.y === y });
+            if (thiscell.length !== 1) {
+                continue;
+            }
+            thiscell = thiscell[0];
+            if (thiscell.value !== "M") {
+                table += "<td class='unrevealed' n" + thiscell.value + "' id='" + x + "," + y + "'></td>";
+            } else if (thiscell.value === "M") {
                 table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
             } else {
                 table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
