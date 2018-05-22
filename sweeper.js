@@ -347,7 +347,7 @@ if (!dimensions["height"] || dimensions["height"] < 1) {
 } else {
     height = parseInt(dimensions["height"], 10);
 }
-if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) > (width * height)) {
+if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) >= (width * height)) {
     total_mines = Math.floor(Math.sqrt(width * height));
     total_mines = Math.floor((Math.random() * Math.floor(Math.sqrt(width*height))) + Math.floor(Math.sqrt(width*height)));
 } else {
