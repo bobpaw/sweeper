@@ -1,2 +1,37 @@
-To win, click all of the non-mine cells.<br>
-Score is calculated using <a href="http://www.minesweeper.info/wiki/3BV">3BV</a>/s.<br>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rules of Minesweeper</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      .exboard {
+      padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="exboard">
+      <table class="board">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>3</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    In the above 3x3 grid, the number 3 represents the number of mines around it.<br>
+    Because of this, exactly 3 of the other cells must have mines.<br>
+    To win, click all of the non-mine cells.<br>
+    <a href="http://www.minesweeper.info/wiki/3BV">3BV</a> is used to calculate <b>objective</b> board score. That is, the minimum number of clicks needed to win.<br>
+  </body>
+</html>
