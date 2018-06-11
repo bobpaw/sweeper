@@ -256,7 +256,7 @@ function reveal (e) {
         object.innerHTML = "M";
         object.classList.add("wrong");
         lose();
-        break;
+        return false;
     default:
         object.innerHTML = boardmap[coord.y][coord.x].value;
         break;
@@ -264,7 +264,7 @@ function reveal (e) {
     var allgone = true;
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M" && boardmap[y][x].status === "U") {
+            if (boardmap[y][x].value !== "M" && boardmap[y][x].status !== "R") {
                 allgone = false;
             }
         }
