@@ -336,7 +336,7 @@ function update_leaderboard () {
 }
 
 // Test for HTTP-GET variables
-var dimensions = read_http_get(["width", "height", "mines"]);
+var dimensions = http_get.read(["width", "height", "mines"]);
 if (!dimensions["width"] || dimensions["width"] < 1) {
     width = 10;
 } else {
