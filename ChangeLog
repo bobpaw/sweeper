@@ -1,4 +1,159 @@
-2018-04-15    <aiden.woodruff@gmail.com>
+2018-06-27  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* ChangeLog: Fixed omission of name
+	Updated from git logs.
+
+	* sweeper.js: Pressing "Enter" in the name form is the same as clicking the button.
+
+	* other.html: File unneeded; deleted.
+
+2018-06-25  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* http-get.js: Moved into module named http_get.
+	(http_get.read): Add comments at beginning.
+	Can search any string, default is window.link.search
+
+	* leaders.js (by_score): Function removed.
+	(create_table): Sort with an arrow function instead.
+	Removed tiny function and placed arrow function.
+
+2018-06-11  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* sweeper.js (reveal): Not only break after a mine, exit function.
+	Flagged shouldn't count as revealed.
+
+2018-05-22  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* sweeper.js: Don't let mine count equal total number of mines.
+
+	* index.html, leaders.html: Add some meta tags to prevent using cache (because of frequent updates at the moment).
+
+2018-05-19  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* leaders.html: Add h1 element giving title.
+
+	* leaders.js (by_scores): Function renamed from sort_scores.
+	Sorts by score/time.
+	(create_table): Sorts elements using new function.
+	Changed indent.
+
+	* sweeper.js: Only win condition is reveal all non-mines.
+	(win, reveal): Fixed incorrect use of `state` instead of `status` that was causing issues.
+	(Cell): Cell object added that holds xy coordinates as well as status and surrounding count.
+	(reveal, getcell): Can call using Cell.
+	(floodFillMark, count3BV): Count 3BV score.
+	(flag): Removed win condition after flagging everything.
+	(populate_board): Create Cell instead of object expression.
+	(update_leaderboard): Record board 3BV score.
+
+2018-05-14  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.html: Dimension form has placeholders that reflect default values.
+
+2018-05-11  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.html: Add collapsable iframe to rules.html.
+
+	* rules.html: Not much actual information, gives info on scoring.
+
+2018-05-05  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* sweeper.js (update_leaderboard): Empty end div if AJAX fails.
+
+2018-05-02  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* leaders.js: Sort entries by time.
+
+	* sweeper.js (win): Add name form for leaderboard.
+	(flag): Only use e if it's a MouseEvent. (No need to program flags right?)
+	(update_leaderboard): Remove all children from win div instead of only first.
+	Submit name.
+
+2018-04-29  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.html: Add top form so mobile is easier (check flag or reveal mode).
+	Now mostly empty; populated by sweeper.js.
+
+	* sweeper.js: Dimensions form uses type number so mobile is easier to use.
+	(reveal): If flag is checked, execute that instead.
+	(populate_board): Don't let board populate with right click.
+	Use Coordinates.equals instead of === test.
+	Add click for first reveal.
+
+2018-04-26  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* sweeper.js: Add populate_board as onclick to every cell at beginning.
+	(Coordinates): Moved class definition to top.
+	(get_cell): Can pass Coordinates object.
+	(reveal): Move coord and object definition to top (used always).
+	Only define values in initial if-then.
+	(populate_board): Table creation moved here.
+
+2018-04-22  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* styles.css: Force width for td elements.
+	Center flag.
+	Don't repeat flag.
+	Squish borders together.
+	Thinner borders.
+
+	* sweeper.js: Print error if dimensions are probably too large (no way to force it though).
+	(update_leaderboard): Nice error message if AJAX fails.
+
+2018-04-21  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* styles.css: Moved from tiles.css.
+	Added CSS for leaders.html.
+
+	* .gitignore: Added comments.
+	Added definition to ignore leaderboards.
+
+	* index.html: Change CSS to styles.css.
+
+	* leaders.html: Basic file added, populated by leaders.js
+
+	* leaders.js: New file, populates leaders.html.
+	Loads scoreboard from leaderboard.json with AJAX.
+	(create_table): Basic table, prints each item in object with keys capitalized.
+
+	* sweeper.js: Logs right and left click count.
+	Change indent.
+	(win, lose): Definitions for end-game actions moved from flag and reveal, respectively.
+	Fixed issue where button was in h3 tag.
+	(reveal): Cells with 0 mines around them have no text, instead of a zero.
+	Removed lose reveal of correct and false.
+	Adds win condition if all non-mine spaces are revealed.
+	(ud_leaderboard): Sets debug div to link to leaders.html.
+	Also record clicks and right clicks.
+	Replaces button with link.
+	Puts stuff in end div, not debug.
+
+	* README.md: Add notice about PHP for leaderboard.
+
+2018-04-19  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* index.html: Added timer.
+	Added debug div.
+
+	* sweeper.js: Add time variable and `timer` interval variable.
+	Add interval on page load to update timer.
+	(flag): Clear timer on win.
+	(reveal): Clear timer on lose.
+	Add area to send score to leaderboard.
+	(update_leaderboard): Send basic AJAX request to `ud_leaderboard.php`.
+	Includes time, width, height, mine count.
+	Dumps output to debug div.
+
+	* ud_leaderboard.php: Dump all input.
+
+2018-04-17  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* http-get.js (read_http_get): Use search string, not href (shorter).
+
+	* sweeper.js: Mine count is randomized
+	(reveal, flag) Height and width moved to variables, keeps dimensions object untouched.
+
+2018-04-15  Aiden Woodruff  <aiden.woodruff@gmail.com>
 
 	* sweeper.js (Coordinates.constructor): Added constructor to autoconvert string x and y.
 	Added option to make new object from old object.
