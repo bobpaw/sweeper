@@ -104,6 +104,13 @@ function win () {
     document.getElementById("board").innerHTML += "";
     document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</h3>\nName: <input id='name' type='text'><br><input id='leaderboard' type='button' value='Push to leaderboard'>";
     document.getElementById("leaderboard").onclick = update_leaderboard;
+    document.getElementById("name").onkeypress = function (e) {
+        if (e.key === "Enter") {
+            document.getElementById("leaderboard").click();
+            return false;
+        }
+        return true;
+    }
 }
 
 function lose () {
