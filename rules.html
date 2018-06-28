@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html>
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/">
   <head>
     <title>Rules of Minesweeper</title>
     <link rel="stylesheet" href="styles.css">
@@ -7,25 +7,28 @@
       .exboard {
       padding: 10px;
       }
+      td.board {
+      cursor: default;
+      }
     </style>
   </head>
   <body>
     <div class="exboard">
       <table class="board">
         <tr>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td class="unrevealed"></td>
+          <td class="unrevealed"></td>
+          <td class="unrevealed"></td>
         </tr>
         <tr>
-          <td></td>
-          <td>3</td>
-          <td></td>
+          <td class="unrevealed"></td>
+          <td class="revealed">3</td>
+          <td class="unrevealed"></td>
         </tr>
         <tr>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td class="unrevealed"></td>
+          <td class="unrevealed"></td>
+          <td class="unrevealed"></td>
         </tr>
       </table>
     </div>
