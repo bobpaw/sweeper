@@ -1,2 +1,166 @@
-To win, click all of the non-mine cells.<br>
-Score is calculated using <a href="http://www.minesweeper.info/wiki/3BV">3BV</a>/s.<br>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/">
+  <head>
+    <title>Rules of Minesweeper</title>
+    <link rel="stylesheet" href="styles.css">
+      <style>
+        div.exboard {
+        padding: 10px;
+        }
+        td.unrevealed, td.flagged {
+        cursor: default;
+        }
+      </style>
+    </head>
+    <body>
+      <h1><a href="index.html">Minesweeper</a>, as she as played</h1>
+      <!--Minesweeper? Hardly know 'er!-->
+      Here is an imaginary game to help teach you:
+      <ul>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+          </table>
+        </div>
+        <li>Starting out, you decide to reveal the center cell.</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="revealed">3</td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+          </table>
+        </div>
+        <li>In the above 3x3 grid, the number 3 represents the number of mines around it.</li>
+        <li>Exactly 3 of the other cells must have mines. However, you don't necessarily know <i>which</i> cells contain mines.</li>
+        <li>You decide to guess and click the top left cell.</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="revealed"></td>
+              <td class="revealed">2</td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="revealed">1</td>
+              <td class="revealed">3</td>
+              <td class="unrevealed"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+          </table>
+        </div>
+        <li><b>Because it has no surrounding mines, it automatically reveals the surrounding cells.</b></li>
+        <li>Looking at the one, you can't immediately tell which adjacent cell has a mine. <u>But wait!</u> The 2 <b>only has 2 adjacent cells</b>! You flag both.</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="revealed"></td>
+              <td class="revealed">2</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="revealed">1</td>
+              <td class="revealed">3</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+            </tr>
+          </table>
+        </div>
+        <li>Now you may feel really stuck. However, because the 1 has two adjacent cells, you can think slightly quantum. (Though really it's more statistics.) Look at it as though the 1 is in both. This is really thinking about both possiblities as equally true.</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="revealed"></td>
+              <td class="revealed">2</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="revealed">1</td>
+              <td class="revealed">3</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="revealed" style="opacity:0.5"><b>M</b></td>
+              <td class="revealed" style="opacity:0.5"><b>M</b></td>
+              <td class="unrevealed"></td>
+            </tr>
+          </table>
+        </div>
+        <li>In both scenarios, the 3 is now fulfilled. This leaves the bottom right cell, which must not be a mine!</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="revealed"></td>
+              <td class="revealed">2</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="revealed">1</td>
+              <td class="revealed">3</td>
+              <td class="flagged"></td>
+            </tr>
+            <tr>
+              <td class="unrevealed"></td>
+              <td class="unrevealed"></td>
+              <td class="revealed">1</td>
+            </tr>
+          </table>
+        </div>
+        <li>The 1 is already fulfilled by the flag above it, so the last mine must be in the bottom left.</li>
+        <li>Now, you have two choices. <b>The game is ended by clicking all non-mine cells</b>. Flagging is for your own benefit. You may either click every non-mine cell, or flag everything and then do that to win.</li>
+        <div class="exboard">
+          <table class="board">
+            <tr>
+              <td class="revealed"></td>
+              <td class="revealed">2</td>
+              <td class="correct"></td>
+            </tr>
+            <tr>
+              <td class="revealed">1</td>
+              <td class="revealed">3</td>
+              <td class="correct"></td>
+            </tr>
+            <tr>
+              <td class="correct"></td>
+              <td class="revealed">2</td>
+              <td class="revealed">1</td>
+            </tr>
+          </table>
+        </div>
+      </ul>
+      <a href="http://www.minesweeper.info/wiki/3BV">3BV</a> is used to calculate <b>objective</b> board score. That is, the minimum number of clicks needed to win.<br />
+    </body>
+  </html>
