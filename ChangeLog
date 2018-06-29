@@ -2,7 +2,23 @@
 
 	* index.html: Fixed meta with no close bracket.
 	More XHTML compliant.
-	Favicon is ogimage.jpg
+	Favicon is favicon.png
+	og:image is ogimage.jpg
+	Shortened og:description
+	Rules is not collapsible iframe, but link.
+	Rules link is to right of title.
+
+	* rules.html: Changed to tutorial.
+	Written for short game.
+	Branch merged and deleted.
+	XHTML compaliant.
+
+	* favicon.ico, favicon.png: Added
+
+	* sweeper.js: Fixed some XHTML stuff.
+	Fixed h3 tag closed by br??
+
+	* leaders.html: XHTML compliancy.
 
 2018-06-27  Aiden Woodruff  <aiden.woodruff@gmail.com>
 

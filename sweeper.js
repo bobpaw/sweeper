@@ -102,7 +102,7 @@ function win () {
     }
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
-    document.getElementById("end").innerHTML = "<br><h3>Congratulations! You win! :)</h3>\nName: <input id='name' type='text'><br><input id='leaderboard' type='button' value='Push to leaderboard'>";
+    document.getElementById("end").innerHTML = "<br /><h3>Congratulations! You win! :)</h3>\nName: <input id='name' type='text' /><br /><input id='leaderboard' type='button' value='Push to leaderboard' />";
     document.getElementById("leaderboard").onclick = update_leaderboard;
     document.getElementById("name").onkeypress = function (e) {
         if (e.key === "Enter") {
@@ -116,7 +116,7 @@ function win () {
 function lose () {
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
-    document.getElementById("end").innerHTML = "<br><h3>I am so sorry. You have lost. :(</br>";
+    document.getElementById("end").innerHTML = "<br /><h3>I am so sorry. You have lost. :(</h3>";
 }
 
 function count3BV () {
@@ -480,7 +480,7 @@ window.onload = function () {
         item.id = "click_type_form";
         item.style.border = "1px solid black";
         item.style.display = "inline-block";
-        item.innerHTML = "<h3 style='display:inline'>Click Mode: </h3><input type='radio' name='clicktype' id='right' value='right' checked><label for='right'>Reveal</label><input type='radio' name='clicktype' id='left' value='left'><label for='left'>Flag</label>";
+        item.innerHTML = "<h3 style='display:inline'>Click Mode: </h3><input type='radio' name='clicktype' id='right' value='right' checked='checked' /><label for='right'>Reveal</label><input type='radio' name='clicktype' id='left' value='left' /><label for='left'>Flag</label>";
         document.getElementById("content").appendChild(item);
 
         // Add some spacing
@@ -512,7 +512,7 @@ window.onload = function () {
         // restart form
         item = document.createElement("form");
         item.method = "get";
-        item.innerHTML = "Width: <input type='number' placeholder='10' name='width'>Height: <input placeholder='10' type='number' name='height'>Mines: <input type='number' name='mines'><br><input type='submit' value='New Game'>";
+        item.innerHTML = "Width: <input type='number' placeholder='10' name='width' />Height: <input placeholder='10' type='number' name='height' />Mines: <input type='number' name='mines'><br><input type='submit' value='New Game'>";
         document.getElementById("content").appendChild(item);
     }
     if (width * height > 5000) {
