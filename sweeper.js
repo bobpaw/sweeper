@@ -1,7 +1,6 @@
 // Global variables
 var boardmap = Array();
 var mines = Array();
-var unflagged = 0;
 var table = "";
 var height = 0;
 var width = 0;
@@ -81,6 +80,12 @@ function get_cell (x, y) {
 	x = x.loc.x;
     }
     return document.getElementById( (x.toString() + "," + y.toString() ) );
+}
+
+// Updates unflagged (or really, unrevealed) mine count
+function unflagged () {
+    document.getElementById("minecount").innerHTML = "Mines: " + (total_mines - Array.concat.apply([], boardmap).filter(x => x.status === "F").length).toString();
+    return true;
 }
 
 // Return x y dict from cell object
@@ -221,8 +226,11 @@ function reveal (e) {
     coord = get_cell_xy(object);
     if (boardmap[coord.y][coord.x].status === "R") {
         return;
-    } else if (boardmap[coord.y][coord.x].status === "U" || boardmap[coord.y][coord.x].status === "F") {
+    } else if (boardmap[coord.y][coord.x].status === "U") {
         boardmap[coord.y][coord.x].status = "R";
+    } else if (boardmap[coord.y][coord.x].status === "F") {
+        boardmap[coord.y][coord.x].status = "R";
+        unflagged();
     }
     object.classList.remove("flagged");
     object.classList.remove("unrevealed");
@@ -295,15 +303,13 @@ function flag (e) {
         boardmap[coord.y][coord.x].status = "U";
         object.classList.remove("flagged");
         object.classList.add("unrevealed");
-        unflagged++;
     } else if (boardmap[coord.y][coord.x].status === "U") {
         boardmap[coord.y][coord.x].status = "F";
         object.classList.remove("unrevealed");
         object.classList.add("flagged");
-        unflagged--;
     } else if (boardmap[coord.y][coord.x].status === "R") {
     }
-    document.getElementById("minecount").innerHTML = "Mines: " + unflagged.toString();
+    unflagged();
 }
 
 function update_leaderboard () {
@@ -400,8 +406,6 @@ function populate_board (e) {
         mines = mines.filter(onlyUniqueCoord);
         mines = mines.filter(value => { return ! value.equals(disclude); });
     }
-
-    unflagged = mines.length;
 
     // Place mines
     for (var i = 0; i < mines.length; i++) {

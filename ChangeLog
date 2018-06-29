@@ -1,3 +1,10 @@
+2018-06-29  Aiden Woodruff  <aiden.woodruff@gmail.com>
+
+	* sweeper.js (unflagged): Function added. Scans and updates Mine count on screen.
+	(flag): Calls unflagged()
+	(reveal): Calls unflagged() if item is flagged.
+	(populate_board): Don't do anything with unflagged.
+
 2018-06-28  Aiden Woodruff  <aiden.woodruff@gmail.com>
 
 	* index.html: Fixed meta with no close bracket.
