@@ -84,7 +84,7 @@ function get_cell (x, y) {
 
 // Updates unflagged (or really, unrevealed) mine count
 function unflagged () {
-    document.getElementById("minecount").innerHTML = "Mines: " + (total_mines - Array.concat.apply([], boardmap).filter(x => x.status === "F").length).toString();
+    document.getElementById("minecount").innerHTML = "Mines: " + (total_mines - Array.prototype.concat.apply([], boardmap).filter(x => x.status === "F").length).toString();
     return true;
 }
 
