@@ -32,6 +32,6 @@ window.onload = function () {
             create_table(scores);
         }
     };
-    xhttp.open("GET", "leaderboard.json");
+    xhttp.open("GET", "leaderboard.json", true);
     xhttp.send();
 }
