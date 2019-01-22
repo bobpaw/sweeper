@@ -1,64 +1,45 @@
 table.board {
-    border-spacing: 0;
-    outline: 1px solid black;
-}
-
-table.board tr {
-    white-space: nowrap;
-}
-
-table.board td {
+  border-spacing: 0;
+  outline: 1px solid black; }
+  table.board tr {
+    white-space: nowrap; }
+  table.board td {
     display: inline-block;
     text-align: center;
     width: 20px;
     height: 20px;
-    border: 1px solid black;
-}
-
-td.unrevealed {
-    cursor: pointer;
-    background-color: #e6e6e6;
-}
-
-td.revealed {
-    cursor: default;
-    background-color: #c6c6c6;
-}
-
-td.flagged, td.correct {
-    cursor: pointer;
-    background-color: #c6c6c6;
-    background-image: url("flag.png");
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-td.wrong {
-    cursor: default;
-    background-color: #ff0000;
-}
-
-td.correct {
-    background-color: #00ff00;
-}
+    border: 1px solid black; }
+    table.board td.unrevealed {
+      cursor: pointer;
+      background-color: #e6e6e6; }
+    table.board td.revealed {
+      cursor: default;
+      background-color: #c6c6c6; }
+    table.board td.flagged, table.board td.correct {
+      cursor: pointer;
+      background-color: #c6c6c6;
+      background-image: url("flag.png");
+      background-position: center;
+      background-repeat: no-repeat; }
+    table.board td.wrong {
+      cursor: default;
+      background-color: #ff0000; }
+    table.board td.correct {
+      background-color: #00ff00; }
 
 div.leaderboard table {
-    border-collapse: collapse;
-    width: 40%;
-}
+  border-collapse: collapse;
+  width: 40%; }
 
 div.leaderboard th {
-    border: 2px solid black;
-    text-align: left;
-}
+  border: 2px solid black;
+  text-align: left; }
 
 div.leaderboard td {
-    border: 2px solid black;
-    text-align: right;
-}
+  border: 2px solid black;
+  text-align: right; }
 
 #rules-clickable {
-    text-decoration: underline;
-    color: blue;
-    cursor: pointer;
-}
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer; }
