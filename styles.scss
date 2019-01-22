@@ -26,7 +26,8 @@ table.board {
         &.flagged, &.correct {
             cursor: pointer;
             background-color: #c6c6c6;
-            background-image: url("flag.png");
+            background-image: url("flag.svg");
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
         }
