@@ -1,7 +1,7 @@
 import {read as http_get_read} from "./http-get.js";
 // Global variables
-let boardmap: Cell[][];
-let mines: Coordinates[];
+let boardmap: Cell[][] = Array();
+let mines: Coordinates[] = Array();
 let table = "";
 let height = 0;
 let width = 0;
@@ -153,12 +153,13 @@ function count3BV (): number {
 }
 
 function floodFillMark (cell: Coordinates | Cell) {
+    let x = 0, y = 0;
     if (cell instanceof Coordinates) {
-	    var x = cell.x;
-	    var y = cell.y;
+	    x = cell.x;
+	    y = cell.y;
     } else if (cell instanceof Cell) {
-	    var x = cell.loc.x;
-	    var y = cell.loc.y;
+	    x = cell.loc.x;
+	    y = cell.loc.y;
     }
     if (x > 0 && !boardmap[y][x - 1].marked) {
 	boardmap[y][x - 1].marked = true;
@@ -218,7 +219,7 @@ function reveal (e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
     }
     let coord: Coordinates;
     let object: HTMLElement;
-    if (e instanceof HTMLTableCellElement) {
+    if (e instanceof HTMLElement) {
         object = e;
         coord = get_cell_xy(object);
     } else if (e instanceof MouseEvent) {
@@ -234,7 +235,6 @@ function reveal (e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
     } else {
         return false;
     }
-    coord = get_cell_xy(object);
     if (boardmap[coord.y][coord.x].status === "R") {
         return;
     } else if (boardmap[coord.y][coord.x].status === "U") {
@@ -393,9 +393,9 @@ function populate_board (e: Coordinates | HTMLTableCellElement | MouseEvent): bo
     // Initialize Board array
     boardmap = Array();
     for (let y = 0; y < height; y++) {
-        boardmap[y] = Array();
+        boardmap.push(Array());
         for (let x = 0; x < width; x++) {
-            boardmap[y][x] = new Cell ("0", "U", false, x, y);
+            boardmap[y].push(new Cell("0", "U", false, x, y)); // FIXME: Somehow x and y aren't correctly supplied or something, so that for x values of zero, y is always zero
         }
     }
 
@@ -452,7 +452,7 @@ function populate_board (e: Coordinates | HTMLTableCellElement | MouseEvent): bo
         table += "<tr>";
         for (let x = 0; x < width; x++) {
             if (boardmap[y][x].value !== "M") {
-                table += "<td class='unrevealed' n" + boardmap[y][x].value + "' id='" + x + "," + y + "'></td>";
+                table += "<td class='unrevealed' id='" + x + "," + y + "'></td>";
             } else if (boardmap[y][x].value === "M") {
                 table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
             } else {
