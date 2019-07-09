@@ -1,5 +1,5 @@
-function create_table (scores) {
-    var stuff = "<table><tr>";
+function create_table (scores: any[]) {
+    let stuff = "<table><tr>";
     for (var part in scores[0]) {
         stuff += "<th>" + part.replace(/\b\w/g, x => x.toUpperCase()) + "</th>";
     }
@@ -23,9 +23,9 @@ function create_table (scores) {
     document.getElementById("content").innerHTML = stuff;
 }
 
-window.onload = function () {
-    var scores = Array();
-    var xhttp = new XMLHttpRequest();
+window.addEventListener("load", function () {
+    let scores = Array();
+    let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             scores = JSON.parse(this.responseText);
@@ -34,4 +34,4 @@ window.onload = function () {
     };
     xhttp.open("GET", "leaderboard.json", true);
     xhttp.send();
-}
+});

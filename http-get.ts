@@ -1,18 +1,13 @@
-var http_get = (function () {
-    function read (names, link = window.location.search) {
-        // names should be an array of strings to search for
-        // link is the search field (if you're actually reading HTTP-GET vars, you shouldn't need to change it).
-	var gets = {};
-	for (var i = 0; i < names.length; i++) {
-		if (link.search(names[i]) !== -1) {
-			gets[names[i]] = link.substring((link.search(names[i]) + names[i].length + 1), link.indexOf("&", link.search(names[i])) === -1 ? undefined : link.indexOf("&", link.search(names[i])));
+export function read (names: string[], link: string = window.location.search) {
+    // names should be an array of strings to search for
+    // link is the search field (if you're actually reading HTTP-GET vars, you shouldn't need to change it).
+	let gets = {};
+	names.forEach(function (name: string): void {
+		if (link.search(name) !== -1) {
+			gets[name] = link.substring((link.search(name) + name.length + 1), link.indexOf("&", link.search(name)) === -1 ? undefined : link.indexOf("&", link.search(name)));
 		} else {
-			gets[names[i]] = undefined;
+			gets[name] = undefined;
 		}
-	}
+	});
 	return gets;
-    }
-    return {
-        read: read
-    }
-})();
+}
