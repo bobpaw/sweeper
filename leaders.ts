@@ -1,4 +1,4 @@
-function create_table (scores: any[]) {
+function create_table(scores: any[]) {
     let stuff = "<table><tr>";
     for (var part in scores[0]) {
         stuff += "<th>" + part.replace(/\b\w/g, x => x.toUpperCase()) + "</th>";

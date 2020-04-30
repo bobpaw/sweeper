@@ -1,4 +1,4 @@
-import {read as http_get_read} from "./http-get.js";
+import { read as http_get_read } from "./http-get.js";
 // Global variables
 let boardmap: Cell[][] = Array();
 let mines: Coordinates[] = Array();
@@ -7,14 +7,14 @@ let height = 0;
 let width = 0;
 let total_mines = 0;
 let time = 0;
-let timer:number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
+let timer: number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
 let clicks = 0;
 let rclicks = 0;
 
 class Coordinates {
     x: number;
     y: number;
-    constructor (x_?: number | string, y_?: number | string) {
+    constructor(x_?: number | string, y_?: number | string) {
         if (!x_) {
             this.x = 0;
             this.y = 0;
@@ -23,26 +23,26 @@ class Coordinates {
             this.y = typeof y_ === "string" ? parseInt(y_, 10) : y_;
         }
     }
-    copy (): Coordinates {
+    copy(): Coordinates {
         return new Coordinates(this.x, this.y);
     }
-    equals (other: Coordinates): boolean {
+    equals(other: Coordinates): boolean {
         if (this.x === other.x && this.y === other.y)
             return true;
     }
-    in_arr (array: Coordinates[]): boolean {
+    in_arr(array: Coordinates[]): boolean {
         return array.some(x => x instanceof Coordinates && this.equals(x), this);
     }
-    find_in (array: Coordinates[]): number {
+    find_in(array: Coordinates[]): number {
         return array.findIndex(x => x instanceof Coordinates && this.equals(x), this);
     }
 }
 class Cell {
-    value: "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"M";
+    value: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M";
     status: any;
     marked: boolean;
     loc: Coordinates;
-    constructor (value_?: "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"M", status_?: any, marked_?: boolean, locationx_?: number | Coordinates, locationy_?: number) {
+    constructor(value_?: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M", status_?: any, marked_?: boolean, locationx_?: number | Coordinates, locationy_?: number) {
         if (!value_) {
             this.value = "0";
             this.status = undefined;
@@ -56,25 +56,25 @@ class Cell {
             this.marked = marked_;
         }
     }
-    copy (): Cell {
+    copy(): Cell {
         return new Cell(this.value, this.status, this.marked, this.loc);
     }
-    equals (other: Cell): boolean {
+    equals(other: Cell): boolean {
         return this.value === other.value && this.status === other.status && this.marked === other.marked && this.loc.equals(other.loc);
     }
-    weak_equals (other: Cell | Coordinates): boolean {
+    weak_equals(other: Cell | Coordinates): boolean {
         return other instanceof Cell ? this.loc.equals(other.loc) : this.loc.equals(other);
     }
-    in_arr (array: Cell[]): boolean {
+    in_arr(array: Cell[]): boolean {
         return array.some(x => x instanceof Cell && this.equals(x), this);
     }
-    weak_in_arr (array: Cell[] | Coordinates[]): boolean {
+    weak_in_arr(array: Cell[] | Coordinates[]): boolean {
         return array.some(x => (x instanceof Cell || x instanceof Coordinates) && this.weak_equals(x), this);
     }
-    find_in (array: Cell[]): number {
+    find_in(array: Cell[]): number {
         return array.findIndex(x => x instanceof Cell && this.equals(x), this);
     }
-    weak_find_in (array: Cell[] | Coordinates[]): number {
+    weak_find_in(array: Cell[] | Coordinates[]): number {
         return array.findIndex(x => (x instanceof Cell || x instanceof Coordinates) && this.weak_equals(x), this);
     }
 }
@@ -83,33 +83,33 @@ class Cell {
 // cells (both 2d arrays and 1d)
 
 // Return cell object from x and y coordinates
-function get_cell (x_: Cell | Coordinates| number, y_?: number): HTMLElement {
+function get_cell(x_: Cell | Coordinates | number, y_?: number): HTMLElement {
     let x = 0, y = 0;
     if (x_ instanceof Coordinates) {
         x = x_.x;
         y = x_.y;
     } else if (x_ instanceof Cell) {
-	    x = x_.loc.x;
-	    y = x_.loc.y;
+        x = x_.loc.x;
+        y = x_.loc.y;
     } else {
         x = x_;
         y = y_;
     }
-    return document.getElementById( (x.toString() + "," + y.toString() ) );
+    return document.getElementById((x.toString() + "," + y.toString()));
 }
 
 // Updates unflagged (or really, unrevealed) mine count
-function unflagged (): void {
+function unflagged(): void {
     document.getElementById("minecount").innerHTML = "Mines: " + (total_mines - Array.prototype.concat.apply([], boardmap).filter((x: Cell) => x.status === "F").length).toString();
 }
 
 // Return x y dict from cell object
-function get_cell_xy (object_: HTMLElement): Coordinates {
+function get_cell_xy(object_: HTMLElement): Coordinates {
     let obj_id = object_.id;
-    return new Coordinates(parseInt(obj_id.substring(0, obj_id.indexOf(",")), 10), parseInt(obj_id.substring(obj_id.indexOf(",")+1), 10));
+    return new Coordinates(parseInt(obj_id.substring(0, obj_id.indexOf(",")), 10), parseInt(obj_id.substring(obj_id.indexOf(",") + 1), 10));
 }
 
-function win (): void {
+function win(): void {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             if (boardmap[y][x].status === "F") {
@@ -131,13 +131,13 @@ function win (): void {
     });
 }
 
-function lose (): void {
+function lose(): void {
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
     document.getElementById("end").innerHTML = "<br /><h3>I am so sorry. You have lost. :(</h3>";
 }
 
-function count3BV (): number {
+function count3BV(): number {
     var score_3bv = 0;
     var cells = [].concat.apply([], boardmap);
     cells.filter((x: Cell) => x.value === "0").forEach(function (cur) {
@@ -152,67 +152,67 @@ function count3BV (): number {
     return score_3bv;
 }
 
-function floodFillMark (cell: Coordinates | Cell) {
+function floodFillMark(cell: Coordinates | Cell) {
     let x = 0, y = 0;
     if (cell instanceof Coordinates) {
-	    x = cell.x;
-	    y = cell.y;
+        x = cell.x;
+        y = cell.y;
     } else if (cell instanceof Cell) {
-	    x = cell.loc.x;
-	    y = cell.loc.y;
+        x = cell.loc.x;
+        y = cell.loc.y;
     }
     if (x > 0 && !boardmap[y][x - 1].marked) {
-	boardmap[y][x - 1].marked = true;
-	if (boardmap[y][x - 1].value === "0") {
-	    floodFillMark(boardmap[y][x - 1]);
-	}
+        boardmap[y][x - 1].marked = true;
+        if (boardmap[y][x - 1].value === "0") {
+            floodFillMark(boardmap[y][x - 1]);
+        }
     }
     if (x > 0 && y > 0 && !boardmap[y - 1][x - 1].marked) {
-	boardmap[y - 1][x - 1].marked = true;
-	if (boardmap[y - 1][x - 1].value === "0") {
-	    floodFillMark(boardmap[y - 1][x - 1]);
-	}
+        boardmap[y - 1][x - 1].marked = true;
+        if (boardmap[y - 1][x - 1].value === "0") {
+            floodFillMark(boardmap[y - 1][x - 1]);
+        }
     }
     if (x > 0 && y < height - 1 && !boardmap[y + 1][x - 1].marked) {
-	boardmap[y + 1][x - 1].marked = true;
-	if (boardmap[y + 1][x - 1].value === "0") {
-	    floodFillMark(boardmap[y + 1][x - 1]);
-	}
+        boardmap[y + 1][x - 1].marked = true;
+        if (boardmap[y + 1][x - 1].value === "0") {
+            floodFillMark(boardmap[y + 1][x - 1]);
+        }
     }
     if (y < height - 1 && !boardmap[y + 1][x].marked) {
-	boardmap[y + 1][x].marked = true;
-	if (boardmap[y + 1][x].value === "0") {
-	    floodFillMark(boardmap[y + 1][x]);
-	}
+        boardmap[y + 1][x].marked = true;
+        if (boardmap[y + 1][x].value === "0") {
+            floodFillMark(boardmap[y + 1][x]);
+        }
     }
     if (x < width - 1 && y < height - 1 && !boardmap[y + 1][x + 1].marked) {
-	boardmap[y + 1][x + 1].marked = true;
-	if (boardmap[y + 1][x + 1].value === "0") {
-	    floodFillMark(boardmap[y + 1][x + 1]);
-	}
+        boardmap[y + 1][x + 1].marked = true;
+        if (boardmap[y + 1][x + 1].value === "0") {
+            floodFillMark(boardmap[y + 1][x + 1]);
+        }
     }
     if (x < width - 1 && !boardmap[y][x + 1].marked) {
-	boardmap[y][x + 1].marked = true;
-	if (boardmap[y][x + 1].value === "0") {
-	    floodFillMark(boardmap[y][x + 1]);
-	}
+        boardmap[y][x + 1].marked = true;
+        if (boardmap[y][x + 1].value === "0") {
+            floodFillMark(boardmap[y][x + 1]);
+        }
     }
     if (x < width - 1 && y > 0 && !boardmap[y - 1][x + 1].marked) {
-	boardmap[y - 1][x + 1].marked = true;
-	if (boardmap[y - 1][x + 1].value === "0") {
-	    floodFillMark(boardmap[y - 1][x + 1]);
-	}
+        boardmap[y - 1][x + 1].marked = true;
+        if (boardmap[y - 1][x + 1].value === "0") {
+            floodFillMark(boardmap[y - 1][x + 1]);
+        }
     }
     if (y > 0 && !boardmap[y - 1][x].marked) {
-	boardmap[y - 1][x].marked = true;
-	if (boardmap[y - 1][x].value === "0") {
-	    floodFillMark(boardmap[y - 1][x]);
-	}
+        boardmap[y - 1][x].marked = true;
+        if (boardmap[y - 1][x].value === "0") {
+            floodFillMark(boardmap[y - 1][x]);
+        }
     }
 }
 
 // Reveal a cell
-function reveal (e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
+function reveal(e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
     // If in flag mode run flag instead
     if ((<HTMLInputElement>document.getElementById("left")).checked) { // I know what #left is in this context
         return flag(e);
@@ -230,8 +230,8 @@ function reveal (e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
         object = get_cell(e);
         coord = e;
     } else if (e instanceof Cell) {
-	    object = get_cell(e);
-	    coord = e.loc;
+        object = get_cell(e);
+        coord = e.loc;
     } else {
         return false;
     }
@@ -248,51 +248,51 @@ function reveal (e: HTMLElement | MouseEvent | Coordinates | Cell): boolean {
     object.classList.add("revealed");
     object.removeEventListener("click", reveal);
     object.removeEventListener("contextmenu", flag);
-    switch(boardmap[coord.y][coord.x].value) {
-    case "0":
-        object.innerHTML = "";
-        let x = coord.x;
-        let y = coord.y;
-        if (x < width - 1) {
-            reveal(get_cell(x + 1, y));
-        }
-        if (x > 0 && y > 0) {
-            reveal(get_cell(x - 1, y - 1));
-        }
-        if (x > 0) {
-            reveal(get_cell(x - 1, y));
-        }
-        if (x > 0 && y < height - 1) {
-            reveal(get_cell(x - 1, y + 1));
-        }
-        if (y < height - 1) {
-            reveal(get_cell(x, y + 1));
-        }
-        if (x < width - 1 && y > 0) {
-            reveal(get_cell(x + 1, y - 1));
-        }
-        if (y > 0) {
-            reveal(get_cell(x, y - 1));
-        }
-        if (x < width - 1 && y < height - 1) {
-            reveal(get_cell(x + 1, y + 1));
-        }
-        break;
-    case "M":
-        object.innerHTML = "M";
-        object.classList.add("wrong");
-        lose();
-        return false;
-    default:
-        object.innerHTML = boardmap[coord.y][coord.x].value;
-        break;
+    switch (boardmap[coord.y][coord.x].value) {
+        case "0":
+            object.innerHTML = "";
+            let x = coord.x;
+            let y = coord.y;
+            if (x < width - 1) {
+                reveal(get_cell(x + 1, y));
+            }
+            if (x > 0 && y > 0) {
+                reveal(get_cell(x - 1, y - 1));
+            }
+            if (x > 0) {
+                reveal(get_cell(x - 1, y));
+            }
+            if (x > 0 && y < height - 1) {
+                reveal(get_cell(x - 1, y + 1));
+            }
+            if (y < height - 1) {
+                reveal(get_cell(x, y + 1));
+            }
+            if (x < width - 1 && y > 0) {
+                reveal(get_cell(x + 1, y - 1));
+            }
+            if (y > 0) {
+                reveal(get_cell(x, y - 1));
+            }
+            if (x < width - 1 && y < height - 1) {
+                reveal(get_cell(x + 1, y + 1));
+            }
+            break;
+        case "M":
+            object.innerHTML = "M";
+            object.classList.add("wrong");
+            lose();
+            return false;
+        default:
+            object.innerHTML = boardmap[coord.y][coord.x].value;
+            break;
     }
     if ([].concat.apply([], boardmap).every(x => x.value !== "M" && x.status !== "R")) {
         win();
     }
 }
 
-function flag (e: any): boolean {
+function flag(e: any): boolean {
     // Only works for clicks
     if (!(e instanceof MouseEvent)) return false;
     rclicks++;
@@ -313,7 +313,7 @@ function flag (e: any): boolean {
     return true;
 }
 
-function update_leaderboard () {
+function update_leaderboard() {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.status === 405) {
@@ -334,10 +334,11 @@ function update_leaderboard () {
                 document.getElementById("end").removeChild(document.getElementById("end").firstChild);
             }
             document.getElementById("end").appendChild(ld);
-        }};
+        }
+    };
     xhttp.open("POST", "ud_leaderboard.php", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
-    xhttp.send(JSON.stringify( {
+    xhttp.send(JSON.stringify({
         name: (<HTMLInputElement>document.getElementById("name")).value,
         time: time,
         width: width,
@@ -363,7 +364,7 @@ if (!dimensions["height"] || dimensions["height"] < 1) {
 }
 if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) >= (width * height)) {
     total_mines = Math.floor(Math.sqrt(width * height));
-    total_mines = Math.floor((Math.random() * Math.floor(Math.sqrt(width*height))) + Math.floor(Math.sqrt(width*height)));
+    total_mines = Math.floor((Math.random() * Math.floor(Math.sqrt(width * height))) + Math.floor(Math.sqrt(width * height)));
 } else {
     total_mines = parseInt(dimensions["mines"], 10);
 }
@@ -373,7 +374,7 @@ function onlyUniqueCoord(value: Coordinates, index: number, self: Coordinates[])
     return value.find_in(self) === index;
 }
 
-function populate_board (e: Coordinates | HTMLTableCellElement | MouseEvent): boolean {
+function populate_board(e: Coordinates | HTMLTableCellElement | MouseEvent): boolean {
     let disclude: Coordinates;
     if (e instanceof Coordinates) {
         // How it should be
@@ -407,11 +408,11 @@ function populate_board (e: Coordinates | HTMLTableCellElement | MouseEvent): bo
             Math.floor(Math.random() * height)
         ));
         mines = mines.filter(onlyUniqueCoord);
-        mines = mines.filter(value =>  !value.equals(disclude));
+        mines = mines.filter(value => !value.equals(disclude));
     }
 
     // Place mines
-    mines.forEach(mine => { boardmap[mine.y][mine.x].value = "M";});
+    mines.forEach(mine => { boardmap[mine.y][mine.x].value = "M"; });
 
     // Assign numbers
     for (let y = 0, count = 0; y < height; y++) {
@@ -428,22 +429,22 @@ function populate_board (e: Coordinates | HTMLTableCellElement | MouseEvent): bo
             if (x < width - 1 && boardmap[y][x + 1].value === "M") {
                 count++;
             }
-            if (y < height - 1 && boardmap[y+1][x].value === "M") {
+            if (y < height - 1 && boardmap[y + 1][x].value === "M") {
                 count++;
             }
-            if (x > 0 && y > 0 && boardmap[y-1][x - 1].value === "M") {
+            if (x > 0 && y > 0 && boardmap[y - 1][x - 1].value === "M") {
                 count++;
             }
-            if (x > 0 && y < height - 1 && boardmap[y+1][x - 1].value === "M") {
+            if (x > 0 && y < height - 1 && boardmap[y + 1][x - 1].value === "M") {
                 count++;
             }
-            if (x < width - 1 && y > 0 && boardmap[y-1][x + 1].value === "M") {
+            if (x < width - 1 && y > 0 && boardmap[y - 1][x + 1].value === "M") {
                 count++;
             }
             if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
                 count++;
             }
-            boardmap[y][x].value = <"0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"M">count.toString();
+            boardmap[y][x].value = <"0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M">count.toString();
         }
     }
 
@@ -539,12 +540,12 @@ window.onload = function () {
         tds[i].onclick = populate_board;
         tds[i].oncontextmenu = populate_board;
     }
-    timer = window.setInterval( function () {
+    timer = window.setInterval(function () {
         time++;
-        document.getElementById("timer").innerHTML = "Time - " + Math.floor(time/60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
+        document.getElementById("timer").innerHTML = "Time - " + Math.floor(time / 60).toString() + ":" + (time % 60 < 10 ? "0" : "") + (time % 60).toString();
     }, 1000);
     document.getElementById("minecount").innerHTML = "Mines: " + total_mines.toString()
-    
+
     // Set fields with previous values
     Array("height", "width", "mines").forEach(function (x) {
         (<HTMLInputElement>document.getElementsByName(x)[0]).value = dimensions[x] ? dimensions[x] : "";
