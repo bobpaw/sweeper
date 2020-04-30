@@ -4,3 +4,6 @@
 
 # Ignore per-server leaderboards
 leaderboard.json
+
+# Ignore Visual Studio stuff
+.vs/
