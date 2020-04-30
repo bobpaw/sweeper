@@ -1,7 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "watch": true,
-        "lib": ["dom", "es2015"]
-    }
+  "compilerOptions": {
+    "target": "es6",
+    "watch": true,
+    "lib": [ "dom", "es2015" ],
+    "removeComments": true
+  },
+  "files": [
+    "http-get.ts",
+    "leaders.ts",
+    "sweeper.ts"
+  ]
 }
