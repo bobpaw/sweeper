@@ -1,9 +1,10 @@
-# Ignore different backups
+# Backups
 *~
 \#*#
 
-# Ignore per-server leaderboards
+# Per-server leaderboards
 leaderboard.json
 
-# Ignore Visual Studio stuff
+# Visual Studio and VS Code
 .vs/
+.vscode/
