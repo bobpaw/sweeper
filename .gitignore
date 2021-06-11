@@ -8,3 +8,9 @@ leaderboard.json
 # Visual Studio and VS Code
 .vs/
 .vscode/
+
+# Node
+node_modules/
+
+# Generated JavaScript
+*.js
