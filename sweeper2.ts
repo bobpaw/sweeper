@@ -7,14 +7,14 @@ class Cell {
   y: number;
   value: CellValue;
   status: "U" | "R" | "F";
-  marked: boolean;
+  _marked: boolean;
 
-  constructor(value: CellValue, x: number, y: number, status: "U" | "R" | "F" = "U", marked: boolean = false) {
+  constructor(value: CellValue, x: number, y: number, status: "U" | "R" | "F" = "U") {
     this.x = x;
     this.y = y;
     this.value = value;
     this.status = status;
-    this.marked = marked;
+    this._marked = false;
   }
 }
 
@@ -87,6 +87,34 @@ class MineField {
 
   get height() {
     return this.field.length;
+  }
+
+  _floodFillEdges(cell: Cell | Coordinates): void {
+    let location: Coordinates = {x: cell.x, y: cell.y};
+
+    this.at(location)._marked = true;
+    this.surrounding(location).forEach(c => {
+      if (c.value === 0) {
+        this._floodFillEdges(c);
+      } else {
+        c._marked = true;
+      }
+    });
+  }
+
+  score3BV(): number {
+    let score = 0;
+    
+    this.field.flat().filter(cell => cell.value === 0).forEach(cell => {
+      if (!cell._marked) {
+        ++score;
+        this._floodFillEdges(cell);
+      }
+    });
+
+    score += this.field.flat().filter(c => !c._marked && c.value !== 9).length;
+    // Who ever heard of .map().reduce()?
+    return score;
   }
 }
 
