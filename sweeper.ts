@@ -2,11 +2,12 @@ import { read as http_get_read } from "./http-get.js";
 import {MineField, Cell, Coordinates} from "./MineField.js";
 
 // Global variables
-let table = "";
+let table = document.createDocumentFragment();
 let time = 0;
 let timer: number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
 let clicks = 0;
 let rclicks = 0;
+let minefield: MineField;
 
 // Return cell object from x and y coordinates
 function get_cell(x_: Cell | Coordinates | number, y_?: number): HTMLElement {
@@ -45,7 +46,26 @@ function win(): void {
     }
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
-    document.getElementById("end").innerHTML = "<br /><h3>Congratulations! You win! :)</h3>\nName: <input id='name' type='text' /><br /><input id='leaderboard' type='button' value='Push to leaderboard' />";
+
+    let end_content = document.createDocumentFragment();
+    end_content.appendChild(document.createElement("br"));
+    end_content.appendChild(document.createElement("h3"));
+    end_content.lastChild.appendChild(document.createTextNode("Congratulations! You win! :)"));
+    end_content.appendChild(document.createTextNode("\nName: "));
+    let input_element = document.createElement("input");
+    input_element.id = "name";
+    input_element.type = "text";
+    end_content.appendChild(input_element);
+    end_content.appendChild(document.createElement("br"));
+    let submit_element = document.createElement("input");
+    submit_element.id = "leaderboard";
+    submit_element.type = "button";
+    submit_element.value = "Push to leaderboard";
+    end_content.appendChild(submit_element);
+
+    document.getElementById("end").appendChild(end_content);
+    
+
     document.getElementById("leaderboard").addEventListener("click", update_leaderboard);
     document.getElementById("name").addEventListener("keypress", function (e) {
         if (e.key === "Enter") {
@@ -60,80 +80,6 @@ function lose(): void {
     window.clearInterval(timer);
     document.getElementById("board").innerHTML += "";
     document.getElementById("end").innerHTML = "<br /><h3>I am so sorry. You have lost. :(</h3>";
-}
-
-function count3BV(): number {
-    var score_3bv = 0;
-    var cells = [].concat.apply([], boardmap);
-    cells.filter((x: Cell) => x.value === "0").forEach(function (cur) {
-        if (cur.marked) {
-            return;
-        }
-        cur.marked = true; // FIXME: Modifies cells, but floodFillMark modifies boardmap. Probably wrong.
-        score_3bv++;
-        floodFillMark(cur);
-    });
-    score_3bv += [].concat.apply([], boardmap).filter(x => { return !x.marked && x.value !== "M" }).length;
-    return score_3bv;
-}
-
-function floodFillMark(cell: Coordinates | Cell) {
-    let x = 0, y = 0;
-    if (cell instanceof Coordinates) {
-        x = cell.x;
-        y = cell.y;
-    } else if (cell instanceof Cell) {
-        x = cell.loc.x;
-        y = cell.loc.y;
-    }
-    if (x > 0 && !boardmap[y][x - 1].marked) {
-        boardmap[y][x - 1].marked = true;
-        if (boardmap[y][x - 1].value === "0") {
-            floodFillMark(boardmap[y][x - 1]);
-        }
-    }
-    if (x > 0 && y > 0 && !boardmap[y - 1][x - 1].marked) {
-        boardmap[y - 1][x - 1].marked = true;
-        if (boardmap[y - 1][x - 1].value === "0") {
-            floodFillMark(boardmap[y - 1][x - 1]);
-        }
-    }
-    if (x > 0 && y < height - 1 && !boardmap[y + 1][x - 1].marked) {
-        boardmap[y + 1][x - 1].marked = true;
-        if (boardmap[y + 1][x - 1].value === "0") {
-            floodFillMark(boardmap[y + 1][x - 1]);
-        }
-    }
-    if (y < height - 1 && !boardmap[y + 1][x].marked) {
-        boardmap[y + 1][x].marked = true;
-        if (boardmap[y + 1][x].value === "0") {
-            floodFillMark(boardmap[y + 1][x]);
-        }
-    }
-    if (x < width - 1 && y < height - 1 && !boardmap[y + 1][x + 1].marked) {
-        boardmap[y + 1][x + 1].marked = true;
-        if (boardmap[y + 1][x + 1].value === "0") {
-            floodFillMark(boardmap[y + 1][x + 1]);
-        }
-    }
-    if (x < width - 1 && !boardmap[y][x + 1].marked) {
-        boardmap[y][x + 1].marked = true;
-        if (boardmap[y][x + 1].value === "0") {
-            floodFillMark(boardmap[y][x + 1]);
-        }
-    }
-    if (x < width - 1 && y > 0 && !boardmap[y - 1][x + 1].marked) {
-        boardmap[y - 1][x + 1].marked = true;
-        if (boardmap[y - 1][x + 1].value === "0") {
-            floodFillMark(boardmap[y - 1][x + 1]);
-        }
-    }
-    if (y > 0 && !boardmap[y - 1][x].marked) {
-        boardmap[y - 1][x].marked = true;
-        if (boardmap[y - 1][x].value === "0") {
-            floodFillMark(boardmap[y - 1][x]);
-        }
-    }
 }
 
 // Reveal a cell
@@ -317,75 +263,19 @@ function populate_board(e: Coordinates | HTMLTableCellElement | MouseEvent): boo
     }
 
     // Initialize Board array
-    boardmap = Array();
+    let boardmap = new MineField(width, height, disclude, minecount);
+
     for (let y = 0; y < height; y++) {
-        boardmap.push(Array());
+        table.appendChild(document.createElement("tr"));
         for (let x = 0; x < width; x++) {
-            boardmap[y].push(new Cell("0", "U", false, x, y)); // FIXME: Somehow x and y aren't correctly supplied or something, so that for x values of zero, y is always zero
-        }
-    }
-
-    // Get random mine values
-    mines = Array();
-    while (mines.length < total_mines) {
-        mines.push(new Coordinates(
-            Math.floor(Math.random() * width),
-            Math.floor(Math.random() * height)
-        ));
-        mines = mines.filter(onlyUniqueCoord);
-        mines = mines.filter(value => !value.equals(disclude));
-    }
-
-    // Place mines
-    mines.forEach(mine => { boardmap[mine.y][mine.x].value = "M"; });
-
-    // Assign numbers
-    for (let y = 0, count = 0; y < height; y++) {
-        for (let x = 0; x < width; x++, count = 0) {
-            if (boardmap[y][x].value === "M") {
-                continue;
-            }
-            if (x > 0 && boardmap[y][x - 1].value === "M") {
-                count++;
-            }
-            if (y > 0 && boardmap[y - 1][x].value === "M") {
-                count++;
-            }
-            if (x < width - 1 && boardmap[y][x + 1].value === "M") {
-                count++;
-            }
-            if (y < height - 1 && boardmap[y + 1][x].value === "M") {
-                count++;
-            }
-            if (x > 0 && y > 0 && boardmap[y - 1][x - 1].value === "M") {
-                count++;
-            }
-            if (x > 0 && y < height - 1 && boardmap[y + 1][x - 1].value === "M") {
-                count++;
-            }
-            if (x < width - 1 && y > 0 && boardmap[y - 1][x + 1].value === "M") {
-                count++;
-            }
-            if (x < width - 1 && y < height - 1 && boardmap[y + 1][x + 1].value === "M") {
-                count++;
-            }
-            boardmap[y][x].value = <"0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M">count.toString();
-        }
-    }
-
-    table = "";
-    for (let y = 0; y < height; y++) {
-        table += "<tr>";
-        for (let x = 0; x < width; x++) {
-            if (boardmap[y][x].value !== "M") {
-                table += "<td class='unrevealed' id='" + x + "," + y + "'></td>";
-            } else if (boardmap[y][x].value === "M") {
-                table += "<td class='unrevealed mine' id='" + x + "," + y + "'></td>";
+            let data = document.createElement("td");
+            data.id = `${x},${y}`
+            if (boardmap[y][x].value === 9) {
+                data.className = "unrevealed mine";
             } else {
-                table += "<td class='unrevealed null' id='" + x + "," + y + "'></td>";
-            }
+                data.className = "unrevealed";
+            
         }
-        table += "</tr>";
     }
 
     // Write table to HTML and add event listeners
