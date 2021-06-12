@@ -1,26 +1,33 @@
+function seconds_to_time(seconds: number): string {
+    return `${Math.floor(seconds / 60)}:` + `${seconds % 60}`.padStart(2, "0");
+}
+
 function create_table(scores: any[]) {
-    let stuff = "<table><tr>";
-    for (var part in scores[0]) {
-        stuff += "<th>" + part.replace(/\b\w/g, x => x.toUpperCase()) + "</th>";
-    }
-    stuff += "</tr>";
+    let table = document.createElement("table");
+
     scores.sort((a, b) => a.score / a.time - b.score / b.time);
-    for (var i = 0; i < scores.length; i++) {
-        stuff += "<tr>";
-        for (var part in scores[i]) {
+    for (let i = 0; i < scores.length; i++) {
+        let row = table.insertRow();
+        for (let part in scores[i]) {
             if (part === "time") {
-                if (scores[i][part] % 60 < 10) {
-                    stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":0" + (scores[i][part] % 60).toString() + "</td>";
-                } else {
-                    stuff += "<td>" + Math.floor(scores[i][part] / 60).toString() + ":" + (scores[i][part] % 60).toString() + "</td>";
-                }
+                row.insertCell().appendChild(document.createTextNode(seconds_to_time(scores[i][part])));
             } else {
-                stuff += "<td>" + scores[i][part].toString() + "</td>";
+                row.insertCell().appendChild(document.createTextNode(scores[i][part].toString()));
             }
         }
-        stuff += "</tr>";
     }
-    document.getElementById("content").innerHTML = stuff;
+
+    // Inserting the header at the end takes advantage of insertRow() creating
+    // a <tbody> for us.
+    let thead = table.createTHead();
+    let header = thead.insertRow();
+    for (let part in scores[0]) {
+        let th = document.createElement("th");
+        th.appendChild(document.createTextNode(part.replace(/\b\w/g, x => x.toUpperCase())));
+        header.appendChild(th);
+    }
+
+    return table;
 }
 
 window.addEventListener("load", function () {
@@ -29,7 +36,7 @@ window.addEventListener("load", function () {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             scores = JSON.parse(this.responseText);
-            create_table(scores);
+            document.getElementById("content").appendChild(create_table(scores));
         }
     };
     xhttp.open("GET", "leaderboard.json", true);
