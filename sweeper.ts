@@ -39,7 +39,6 @@ function win(): void {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             if (boardmap[y][x].status === "F") {
-                get_cell(x, y).classList.remove("flagged");
                 get_cell(x, y).classList.add("correct");
             }
         }
