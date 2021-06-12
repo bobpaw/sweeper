@@ -1,86 +1,12 @@
 import { read as http_get_read } from "./http-get.js";
+import {MineField, Cell, Coordinates} from "./MineField.js";
+
 // Global variables
-let boardmap: Cell[][] = Array();
-let mines: Coordinates[] = Array();
 let table = "";
-let height = 0;
-let width = 0;
-let total_mines = 0;
 let time = 0;
 let timer: number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
 let clicks = 0;
 let rclicks = 0;
-
-class Coordinates {
-    x: number;
-    y: number;
-    constructor(x_?: number | string, y_?: number | string) {
-        if (!x_) {
-            this.x = 0;
-            this.y = 0;
-        } else {
-            this.x = typeof x_ === "string" ? parseInt(x_, 10) : x_;
-            this.y = typeof y_ === "string" ? parseInt(y_, 10) : y_;
-        }
-    }
-    copy(): Coordinates {
-        return new Coordinates(this.x, this.y);
-    }
-    equals(other: Coordinates): boolean {
-        if (this.x === other.x && this.y === other.y)
-            return true;
-    }
-    in_arr(array: Coordinates[]): boolean {
-        return array.some(x => x instanceof Coordinates && this.equals(x), this);
-    }
-    find_in(array: Coordinates[]): number {
-        return array.findIndex(x => x instanceof Coordinates && this.equals(x), this);
-    }
-}
-class Cell {
-    value: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M";
-    status: any;
-    marked: boolean;
-    loc: Coordinates;
-    constructor(value_?: "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "M", status_?: any, marked_?: boolean, locationx_?: number | Coordinates, locationy_?: number) {
-        if (!value_) {
-            this.value = "0";
-            this.status = undefined;
-            this.marked = false;
-            this.loc = new Coordinates();
-            return;
-        } else {
-            this.loc = locationx_ instanceof Coordinates ? locationx_.copy() : new Coordinates(locationx_, locationy_);
-            this.value = value_;
-            this.status = status_;
-            this.marked = marked_;
-        }
-    }
-    copy(): Cell {
-        return new Cell(this.value, this.status, this.marked, this.loc);
-    }
-    equals(other: Cell): boolean {
-        return this.value === other.value && this.status === other.status && this.marked === other.marked && this.loc.equals(other.loc);
-    }
-    weak_equals(other: Cell | Coordinates): boolean {
-        return other instanceof Cell ? this.loc.equals(other.loc) : this.loc.equals(other);
-    }
-    in_arr(array: Cell[]): boolean {
-        return array.some(x => x instanceof Cell && this.equals(x), this);
-    }
-    weak_in_arr(array: Cell[] | Coordinates[]): boolean {
-        return array.some(x => (x instanceof Cell || x instanceof Coordinates) && this.weak_equals(x), this);
-    }
-    find_in(array: Cell[]): number {
-        return array.findIndex(x => x instanceof Cell && this.equals(x), this);
-    }
-    weak_find_in(array: Cell[] | Coordinates[]): number {
-        return array.findIndex(x => (x instanceof Cell || x instanceof Coordinates) && this.weak_equals(x), this);
-    }
-}
-
-// TODO(aiden.woodruff@gmail.com): Write function to return surrounding 
-// cells (both 2d arrays and 1d)
 
 // Return cell object from x and y coordinates
 function get_cell(x_: Cell | Coordinates | number, y_?: number): HTMLElement {
