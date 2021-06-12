@@ -1,4 +1,3 @@
-import { read as http_get_read } from "./http-get.js";
 import {MineField, Cell, Coordinates} from "./MineField.js";
 
 // Global variables
@@ -222,22 +221,20 @@ function update_leaderboard() {
 }
 
 // Test for HTTP-GET variables
-let dimensions = http_get_read(["width", "height", "mines"]);
-if (!dimensions["width"] || dimensions["width"] < 1) {
-    width = 10;
-} else {
-    width = parseInt(dimensions["width"], 10);
-}
-if (!dimensions["height"] || dimensions["height"] < 1) {
-    height = 10;
-} else {
-    height = parseInt(dimensions["height"], 10);
-}
-if (!dimensions["mines"] || parseInt(dimensions["mines"], 10) >= (width * height)) {
-    total_mines = Math.floor(Math.sqrt(width * height));
-    total_mines = Math.floor((Math.random() * Math.floor(Math.sqrt(width * height))) + Math.floor(Math.sqrt(width * height)));
-} else {
-    total_mines = parseInt(dimensions["mines"], 10);
+let searchParams = (new URL(document.URL)).searchParams;
+let params = {
+    width: searchParams.has("width") ? parseInt(searchParams.get("width")) : 10,
+    height: searchParams.has("height") ? parseInt(searchParams.get("height")) : 10,
+    mines: searchParams.has("mines") ? parseInt(searchParams.get("mines")) : null
+};
+
+// Param validation
+if (params.width < 1) params.width = 10;
+if (params.height < 1) params.height = 10;
+
+if (params.mines === null || params.mines >= (params.width * params.height)) {
+    let root = Math.floor(Math.sqrt(params.width * params.height));
+    params.mines = Math.floor((Math.random() * root) + root);
 }
 
 // Filter method
@@ -263,14 +260,14 @@ function populate_board(e: Coordinates | HTMLTableCellElement | MouseEvent): boo
     }
 
     // Initialize Board array
-    let boardmap = new MineField(width, height, disclude, minecount);
+    minefield = new MineField(width, height, disclude, minecount);
 
     for (let y = 0; y < height; y++) {
         table.appendChild(document.createElement("tr"));
         for (let x = 0; x < width; x++) {
             let data = document.createElement("td");
             data.id = `${x},${y}`
-            if (boardmap[y][x].value === 9) {
+            if (minefield.at({x, y}).value === 9) {
                 data.className = "unrevealed mine";
             } else {
                 data.className = "unrevealed";
@@ -342,7 +339,8 @@ window.onload = function () {
         document.body.removeChild(document.getElementById("board"));
         return;
     }
-    for (var y = 0; y < height; y++) {
+
+    for (let y = 0; y < height; y++) {
         table += "<tr>";
         for (let x = 0; x < width; x++) {
             table += "<td class='unrevealed' id='" + x + ',' + y + "'></td>";

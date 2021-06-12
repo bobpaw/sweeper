@@ -6,7 +6,6 @@
     "removeComments": true
   },
   "files": [
-    "http-get.ts",
     "leaders.ts",
     "sweeper.ts",
     "MineField.ts"
