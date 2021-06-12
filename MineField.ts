@@ -121,3 +121,5 @@ class MineField {
 function random_int(max: number): number {
   return Math.floor(Math.random() * max);
 }
+
+export {Cell, Coordinates, MineField};
