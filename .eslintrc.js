@@ -1,12 +1,12 @@
 module.exports = {
 	env: {
 		browser: true,
-		commonjs: true,
 		es2020: true,
 		mocha: true
 	},
 	extends: "eslint:recommended",
 	parserOptions: {
+		sourceType: "module",
 		ecmaVersion: 11
 	},
 	plugins: [
@@ -94,6 +94,12 @@ module.exports = {
 		"jsdoc/valid-types": 0 // Recommended; Broken rn
 	},
 	overrides: [
+		{
+			files: [".eslintrc.js"],
+			env: {
+				commonjs:true
+			}
+		},
 		{
 			files: ["*.test.js", ".eslintrc.js"],
 			rules: {
