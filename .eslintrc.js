@@ -5,6 +5,7 @@ module.exports = {
 		mocha: true
 	},
 	extends: "eslint:recommended",
+	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		sourceType: "module",
 		ecmaVersion: 11
@@ -74,7 +75,7 @@ module.exports = {
 		"jsdoc/no-undefined-types": "error", // Recommended
 		"jsdoc/require-description": "error",
 		"jsdoc/require-description-complete-sentence": "warn",
-		"jsdoc/require-example": ["error", { exemptNoArguments: true }],
+		"jsdoc/require-example": ["warn", { exemptNoArguments: true }],
 		"jsdoc/require-file-overview": "warn",
 		"jsdoc/require-hyphen-before-param-description": "off",
 		"jsdoc/require-jsdoc": "warn", // Recommended
@@ -101,7 +102,7 @@ module.exports = {
 			}
 		},
 		{
-			files: ["*.test.js", ".eslintrc.js"],
+			files: ["*.test.ts", ".eslintrc.js"],
 			rules: {
 				"jsdoc/check-access": 0, "jsdoc/check-alignment": 0, "jsdoc/check-examples": 0,
 				"jsdoc/check-indentation": 0, "jsdoc/check-param-names": 0, "jsdoc/check-syntax": 0,
