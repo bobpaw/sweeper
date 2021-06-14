@@ -1,5 +1,23 @@
 $cell-size: 20px;
 
+.big_and_bold {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+#content #clicktype_form {
+    border: 1px solid black;
+    display: inline-block;
+    margin-bottom: 18px;
+    p {
+        display: inline;
+    }
+}
+
+#fatal-warning, #win-screen, #lose-screen {
+    display: none;
+}
+
 table.board {
     border-spacing: 0;
     outline: 1px solid black;
