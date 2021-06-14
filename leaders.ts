@@ -1,6 +1,4 @@
-function seconds_to_time(seconds: number): string {
-    return `${Math.floor(seconds / 60)}:` + `${seconds % 60}`.padStart(2, "0");
-}
+import formatTime from "./formatTime.js";
 
 function create_table(scores: any[]) {
     let table = document.createElement("table");
@@ -10,7 +8,7 @@ function create_table(scores: any[]) {
         let row = table.insertRow();
         for (let part in scores[i]) {
             if (part === "time") {
-                row.insertCell().appendChild(document.createTextNode(seconds_to_time(scores[i][part])));
+                row.insertCell().appendChild(document.createTextNode(formatTime(scores[i][part])));
             } else {
                 row.insertCell().appendChild(document.createTextNode(scores[i][part].toString()));
             }
