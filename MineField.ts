@@ -89,17 +89,11 @@ class MineField {
     return this.field.length;
   }
 
-  _floodFillEdges(cell: Cell | Coordinates): void {
-    let location: Coordinates = {x: cell.x, y: cell.y};
+  floodToNumbers(cell: Cell | Coordinates, func: (c: Cell) => void): void {
+    func(this.at(cell));
 
-    this.at(location)._marked = true;
-    this.surrounding(location).forEach(c => {
-      if (c.value === 0) {
-        this._floodFillEdges(c);
-      } else {
-        c._marked = true;
-      }
-    });
+    if (this.at(cell).value === 0)
+      this.surrounding(cell).forEach(c => this.floodToNumbers(c, func));
   }
 
   score3BV(): number {
@@ -108,7 +102,7 @@ class MineField {
     this.field.flat().filter(cell => cell.value === 0).forEach(cell => {
       if (!cell._marked) {
         ++score;
-        this._floodFillEdges(cell);
+        this.floodToNumbers(cell, c => {this.at(c)._marked = true;})
       }
     });
 
