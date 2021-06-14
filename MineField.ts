@@ -110,6 +110,15 @@ class MineField {
     // Who ever heard of .map().reduce()?
     return score;
   }
+
+  forEach(func: (cell: Cell) => void) {
+    // TODO: Implement a thisArg if necessary.
+    for (let y = 0; y < this.height; ++y) {
+      for (let x = 0; x < this.width; ++x) {
+        func(this.at({x, y}));
+      }
+    }
+  }
 }
 
 function random_int(max: number): number {
