@@ -41,13 +41,13 @@ function getTDByCell(cell: Cell | Coordinates): HTMLTableCellElement {
  */
 function installCellEvents(cell: Cell | Coordinates): void {
 	let td = getTDByCell(cell);
-	td.addEventListener("click", reveal);
+	td.addEventListener("click", revealCallback);
 	td.addEventListener("contextmenu", flag);
 }
 
 function uninstallCellEvents(cell: Cell | Coordinates): void {
     let td = getTDByCell(cell);
-    td.removeEventListener("click", reveal);
+    td.removeEventListener("click", revealCallback);
 	td.removeEventListener("contextmenu", flag);
 }
 
@@ -84,7 +84,7 @@ function win(): void {
 		return true;
 	});
 	// TODO: Decide if this is the correct display.
-	$("#win-screen").style.display = "block";
+	document.getElementById("win-screen").style.display = "block";
 }
 
 /**
@@ -94,7 +94,21 @@ function lose(): void {
 	window.clearInterval(timer);
 	minefield.forEach(c => {uninstallCellEvents(c);});
 	// TODO: Decide if this is the right display.
-	$("#lose-screen").style.display="block";
+	document.getElementById("lose-screen").style.display = "block";
+}
+
+function revealCell(cell: Cell): void {
+	if (cell.status === "R") return;
+	cell.status = "R";
+
+	let td = getTDByCell(cell);
+	if (cell.value !== 0)
+		this.append(cell.value.toString());
+
+	td.classList.remove("flagged");
+	td.classList.remove("unflagged");
+	td.classList.add("revealed");
+	uninstallCellEvents(cell);
 }
 
 // Reveal a cell
@@ -102,85 +116,27 @@ function lose(): void {
  * @param e
  * @example
  */
-function reveal(e: MouseEvent): boolean {
+function revealCallback(e: MouseEvent): boolean {
 	// If in flag mode run flag instead
 	if (click_form.elements["flag"].checked) {
 		return flag(e);
 	}
 	
-	let cell = getCellByTD(this);
-	
-	switch(cell.status) {
-		case "R":
-			return;
-		case "U":
-			cell.status = "R";
-			break;
-		case "F":
-			cell.status = "R";
-			updateMinecount(); // FIXME: Run at end instead.
-	}
+	let td = e.currentTarget as HTMLTableCellElement;
+	let cell = getCellByTD(td);
 	
 	if (cell.value === 9) {
 		// TODO: Replace with mine image
-		this.textContent = "M";
-		this.classList.add("wrong");
+		td.textContent = "M";
+		td.classList.add("wrong");
 		lose();
-		
+
 	} else {
-		minefield.floodToNumbers(cell, c => {
-			if (c.status === "R") return;
-			c.status = "R";
-
-			let td = getTDByCell(c);
-			td.classList.remove("flagged");
-			td.classList.remove("unflagged");
-			td.classList.add("revealed");
-			uninstallCellEvents(c);
-
-		});
+		minefield.floodToNumbers(cell, revealCell);
 	}
 	
-	switch (boardmap[coord.y][coord.x].value) {
-	case "0":
-		object.innerHTML = "";
-		let x = coord.x;
-		let y = coord.y;
-		if (x < width - 1) {
-			reveal(get_cell(x + 1, y));
-		}
-		if (x > 0 && y > 0) {
-			reveal(get_cell(x - 1, y - 1));
-		}
-		if (x > 0) {
-			reveal(get_cell(x - 1, y));
-		}
-		if (x > 0 && y < height - 1) {
-			reveal(get_cell(x - 1, y + 1));
-		}
-		if (y < height - 1) {
-			reveal(get_cell(x, y + 1));
-		}
-		if (x < width - 1 && y > 0) {
-			reveal(get_cell(x + 1, y - 1));
-		}
-		if (y > 0) {
-			reveal(get_cell(x, y - 1));
-		}
-		if (x < width - 1 && y < height - 1) {
-			reveal(get_cell(x + 1, y + 1));
-		}
-		break;
-	case "M":
-		object.innerHTML = "M";
-		object.classList.add("wrong");
-		lose();
-		return false;
-	default:
-		object.innerHTML = boardmap[coord.y][coord.x].value;
-		break;
-	}
-	
+	updateMinecount();
+
 	if (minefield.every(c => c.value !== 9 && c.status === "R")) win();
 	return true;
 }
@@ -191,27 +147,28 @@ function reveal(e: MouseEvent): boolean {
  * @param e
  */
 function flag(e: MouseEvent): boolean {
-	// Only works for clicks
 	++rclicks;
 	e.preventDefault();
-	let cell = getCellByTD(this);
+
+	let td = e.currentTarget as HTMLTableCellElement;
+	let cell = getCellByTD(td);
+
 	switch (cell.status) {
 	case "F":
 		cell.status = "U";
-		this.classList.remove("flagged");
-		this.classList.add("unrevealed");
+		td.classList.remove("flagged");
+		td.classList.add("unrevealed");
 		updateMinecount();
 		return true;
 	case "U":
 		cell.status = "F";
-		this.classList.remove("unrevealed");
-		this.classList.add("flagged");
+		td.classList.remove("unrevealed");
+		td.classList.add("flagged");
 		updateMinecount();
 		return true;
 	case "R":
 	default:
 		return false;
-        
 	}
 }
 
