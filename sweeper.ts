@@ -6,7 +6,7 @@
 import { MineField, Cell, Coordinates } from "./MineField.js";
 import formatTime from "./formatTime.js";
 
-const $ = document.querySelector;
+const $ = document.querySelector.bind(document);
 
 // Global variables
 let table: HTMLTableElement;
@@ -302,9 +302,9 @@ window.onload = function () {
 		return;
 	}
 
-	for (let y = 0; y < minefield.height; y++) {
+	for (let y = 0; y < params.height; y++) {
 		const row = table.insertRow();
-		for (let x = 0; x < minefield.width; x++) {
+		for (let x = 0; x < params.width; x++) {
 			const data = row.insertCell();
 			data.id = `${x},${y}`;
 			data.className = "unrevealed";
