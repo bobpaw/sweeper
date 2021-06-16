@@ -74,21 +74,19 @@ class MineField {
 	}
 
 	surrounding(location: Coordinates): Cell[] {
-		const ret: Coordinate_t[] = [] as Coordinate_t[];
+		const ret = [] as Coordinates[];
 		const { x, y } = location;
 
-		ret.push([x - 1, y - 1]); // NW
-		ret.push([x, y - 1]); // N
-		ret.push([x + 1, y - 1]); // NE
-		ret.push([x + 1, y]); // E
-		ret.push([x + 1, y + 1]); // SE
-		ret.push([x, y + 1]); // S
-		ret.push([x - 1, y + 1]); // SW
-		ret.push([x - 1, y]); // W
+		ret.push({x: x - 1, y: y - 1}); // NW
+		ret.push({x, y: y - 1}); // N
+		ret.push({x: x + 1, y: y - 1}); // NE
+		ret.push({x: x + 1, y}); // E
+		ret.push({x: x + 1, y: y + 1}); // SE
+		ret.push({x, y: y + 1}); // S
+		ret.push({x: x - 1, y: y + 1}); // SW
+		ret.push({x: x - 1, y}); // W
 
-		ret.filter(c => this.in_bounds({ x: c[0], y: c[1] }));
-
-		return ret.map(c => this.at({ x: c[0], y: c[1] }));
+		return ret.filter(c => this.in_bounds(c)).map(c => this.at(c));
 	}
 
 	get width(): number {
