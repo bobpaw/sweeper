@@ -26,7 +26,7 @@ let params: {width: number, height: number, mines: number};
  * @returns A coordinates object.
  */
 function getCoordinatesByTD(cell: HTMLTableCellElement): Coordinates {
-	const coord_tuple = cell.id.split(",").map(parseInt);
+	const coord_tuple = cell.id.split(",").map(n => parseInt(n));
 	return { x: coord_tuple[0], y: coord_tuple[1] };
 }
 
@@ -139,7 +139,7 @@ function revealCell(cell: Cell): void {
 
 	const td = getTDByCell(cell);
 	if (cell.value !== 0)
-		this.append(cell.value.toString());
+		td.append(cell.value.toString());
 
 	td.classList.remove("flagged");
 	td.classList.remove("unflagged");
