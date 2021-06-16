@@ -157,7 +157,7 @@ function revealCell(cell: Cell): void {
  */
 function revealCallback(event: MouseEvent): boolean {
 	// If in flag mode run flag instead
-	if (click_form.elements["flag"].checked) {
+	if (click_form.elements["clicktype"].value === "flag") {
 		return flag(event);
 	}
 
@@ -304,6 +304,7 @@ window.onload = function () {
 
 	const params_form = $("#params") as HTMLFormElement;
 	minecount = $("#minecount") as HTMLParagraphElement;
+	click_form = $("#clicktype_form") as HTMLFormElement;
 
 	
 	// Replace apology with table
