@@ -1,6 +1,10 @@
+/**
+ * @file Generate and manage content for index.html.
+ * @author Aiden Woodruff
+ */
+
 import { MineField, Cell, Coordinates } from "./MineField.js";
 import formatTime from "./formatTime.js";
-import { getNodeMajorVersion } from "./node_modules/typescript/lib/typescript.js";
 
 const $ = document.querySelector;
 
@@ -18,17 +22,19 @@ let minefield: MineField;
 /**
  * Get cell in minefield via the <td>.
  * 
- * @param cell
+ * @param cell A <td> in table.
+ * @returns The corresponding cell in minefield.
  */
 function getCellByTD(cell: HTMLTableCellElement): Cell {
-	let coord_tuple = cell.id.split(",").map(parseInt);
+	const coord_tuple = cell.id.split(",").map(parseInt);
 	return minefield.at({ x: coord_tuple[0], y: coord_tuple[1] });
 }
 
 /**
  * Get <td> via cell in minefield.
  * 
- * @param cell
+ * @param cell A cell object in minefield.
+ * @returns The corresponding <td> in table.
  */
 function getTDByCell(cell: Cell | Coordinates): HTMLTableCellElement {
 	return table.rows[cell.y].cells[cell.x];
@@ -37,17 +43,22 @@ function getTDByCell(cell: Cell | Coordinates): HTMLTableCellElement {
 /**
  * Install <td> event listeners.
  * 
- * @param cell {Cell}
+ * @param cell The cell corresponding to the <td>.
  */
 function installCellEvents(cell: Cell | Coordinates): void {
-	let td = getTDByCell(cell);
+	const td = getTDByCell(cell); // TODO: Maybe change to accepting td as param?
 	td.addEventListener("click", revealCallback);
 	td.addEventListener("contextmenu", flag);
 }
 
+/**
+ * Uninstall <td> event listeners.
+ *
+ * @param cell The cell corresponding to the <td>.
+ */
 function uninstallCellEvents(cell: Cell | Coordinates): void {
-    let td = getTDByCell(cell);
-    td.removeEventListener("click", revealCallback);
+	const td = getTDByCell(cell);
+	td.removeEventListener("click", revealCallback);
 	td.removeEventListener("contextmenu", flag);
 }
 
@@ -64,15 +75,15 @@ function updateMinecount(): void {
 }
 
 /**
- *
+ * Show win screen and leaderboard submission.
  */
 function win(): void {
-    minefield.forEach(c => {
-        if (c.status === "F") {
-            getTDByCell(c).classList.add("correct");
-            uninstallCellEvents(c);
-        }
-    });
+	minefield.forEach(c => {
+		if (c.status === "F") {
+			getTDByCell(c).classList.add("correct");
+			uninstallCellEvents(c);
+		}
+	});
 	window.clearInterval(timer);
 
 	$("#leaderboard").addEventListener("click", update_leaderboard);
@@ -88,20 +99,27 @@ function win(): void {
 }
 
 /**
- *
+ * Show lose screen.
  */
 function lose(): void {
 	window.clearInterval(timer);
-	minefield.forEach(c => {uninstallCellEvents(c);});
+	minefield.forEach(c => { uninstallCellEvents(c); });
 	// TODO: Decide if this is the right display.
 	document.getElementById("lose-screen").style.display = "block";
 }
 
+/**
+ * Reveal a cell in the minefield.
+ * 
+ * Updates Cell and <td>.
+ * 
+ * @param cell The cell to reveal.
+ */
 function revealCell(cell: Cell): void {
 	if (cell.status === "R") return;
 	cell.status = "R";
 
-	let td = getTDByCell(cell);
+	const td = getTDByCell(cell);
 	if (cell.value !== 0)
 		this.append(cell.value.toString());
 
@@ -111,19 +129,24 @@ function revealCell(cell: Cell): void {
 	uninstallCellEvents(cell);
 }
 
-// Reveal a cell
 /**
- * @param e
- * @example
+ * Callback to reveal a cell (left click).
+ * 
+ * If the click type is set to flag, calls flag().
+ * 
+ * @param event The MouseEvent that triggered me.
+ * @returns True or the return value of flag().
  */
-function revealCallback(e: MouseEvent): boolean {
+function revealCallback(event: MouseEvent): boolean {
 	// If in flag mode run flag instead
 	if (click_form.elements["flag"].checked) {
-		return flag(e);
+		return flag(event);
 	}
+
+	++clicks;
 	
-	let td = e.currentTarget as HTMLTableCellElement;
-	let cell = getCellByTD(td);
+	const td = event.currentTarget as HTMLTableCellElement;
+	const cell = getCellByTD(td);
 	
 	if (cell.value === 9) {
 		// TODO: Replace with mine image
@@ -142,16 +165,17 @@ function revealCallback(e: MouseEvent): boolean {
 }
 
 /**
- * Event handler to flag cell.
+ * Event handler to flag a cell.
  * 
- * @param e
+ * @param event The MouseEvent that triggered me.
+ * @returns Boolean indicating failure if the <td> is revealed. Success otherwise.
  */
-function flag(e: MouseEvent): boolean {
+function flag(event: MouseEvent): boolean {
 	++rclicks;
-	e.preventDefault();
+	event.preventDefault();
 
-	let td = e.currentTarget as HTMLTableCellElement;
-	let cell = getCellByTD(td);
+	const td = event.currentTarget as HTMLTableCellElement;
+	const cell = getCellByTD(td);
 
 	switch (cell.status) {
 	case "F":
@@ -173,23 +197,23 @@ function flag(e: MouseEvent): boolean {
 }
 
 /**
- *
+ * Send an XHR to ud_leaderboard.php file.
  */
 function update_leaderboard() {
-	var xhttp = new XMLHttpRequest();
+	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
 		if (this.status === 405) {
 			console.log("Couldn't update leaderboard.");
 			while (document.getElementById("end").firstChild) {
 				document.getElementById("end").removeChild(document.getElementById("end").firstChild);
 			}
-			var error_msg = document.createElement("p");
+			const error_msg = document.createElement("p");
 			error_msg.innerHTML = "Leaderboard doesn't work here.";
 			document.getElementById("end").appendChild(error_msg);
 		} else if (this.readyState === 4 && this.status !== 200) {
 			console.log("There was some error updating the leaderboard.");
 		} else if (this.readyState === 4 && this.status === 200) {
-			var ld = document.createElement("a");
+			const ld = document.createElement("a");
 			ld.href = "leaders.html";
 			ld.innerHTML = "Leaderboard";
 			while (document.getElementById("end").firstChild) {
@@ -213,9 +237,9 @@ function update_leaderboard() {
 }
 
 // Test for HTTP-GET variables
-let searchParams = (new URL(document.URL)).searchParams;
+const searchParams = (new URL(document.URL)).searchParams;
 
-let params = {
+const params = {
 	width: searchParams.has("width") ? parseInt(searchParams.get("width")) : 10,
 	height: searchParams.has("height") ? parseInt(searchParams.get("height")) : 10,
 	mines: searchParams.has("mines") ? parseInt(searchParams.get("mines")) : null
@@ -226,18 +250,21 @@ if (params.width < 1) params.width = 10;
 if (params.height < 1) params.height = 10;
 
 if (params.mines === null || params.mines >= (params.width * params.height)) {
-	let root = Math.floor(Math.sqrt(params.width * params.height));
+	const root = Math.floor(Math.sqrt(params.width * params.height));
 	params.mines = Math.floor((Math.random() * root) + root);
 }
 
 /**
- * @param e
- * @example
+ * Event handler before minefield has been planted.
+ * 
+ * Doing it in two steps like this allows exclusion of a specific cell.
+ * 
+ * @param event The MouseEvent that triggers me.
+ * @returns True.
  */
-function populate_board(e: MouseEvent): boolean {
-
-	let exclude = getCellByTD(this);
-
+function populate_board(event: MouseEvent): true {
+	const td = event.currentTarget as HTMLTableCellElement;
+	const exclude = getCellByTD(td);
 
 	// Initialize Board array
 	minefield = new MineField(params.width, params.height, exclude, params.mines);
@@ -251,7 +278,8 @@ function populate_board(e: MouseEvent): boolean {
 
 	// FIXME: might be an error to trigger an event from an event
 	// Hopefully the `once` unregisters this first.
-	this.click();
+	td.click();
+
 	return true;
 }
 
@@ -259,17 +287,14 @@ window.onload = function () {
 	let params_form: HTMLFormElement;
 
 	// Scope out item
-	{
-		$("#content").removeChild($("#apology"));
-		let content = document.createDocumentFragment();
 
-		// Replace apology with table
-		table = document.createElement("table");
-		table.classList.add("board");
-		table.id = "board";
-		$("#content").insertBefore(table, $("#apology"));
+	// Replace apology with table
+	table = document.createElement("table");
+	table.classList.add("board");
+	table.id = "board";
+	$("#content").insertBefore(table, $("#apology"));
+	$("#content").removeChild($("#apology"));
 
-	}
 	if (params.width * params.height > 5000) {
 		// TODO: Decide whether this is the display style I want.
 		(<HTMLElement>$("#fatal-warning")).style.display = "block";
@@ -278,9 +303,9 @@ window.onload = function () {
 	}
 
 	for (let y = 0; y < minefield.height; y++) {
-		let row = table.insertRow();
+		const row = table.insertRow();
 		for (let x = 0; x < minefield.width; x++) {
-			let data = row.insertCell();
+			const data = row.insertCell();
 			data.id = `${x},${y}`;
 			data.className = "unrevealed";
 			data.addEventListener("click", populate_board, { once: true });
@@ -295,7 +320,7 @@ window.onload = function () {
 	updateMinecount();
 
 	// Set fields with previous values
-	for (let param in params) {
+	for (const param in params) {
 		params_form.elements[param] = params[param];
 	}
 };

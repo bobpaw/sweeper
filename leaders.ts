@@ -1,15 +1,23 @@
+/**
+ * @file Generates content for leaders.html.
+ * @author Aiden Woodruff
+ */
+
 import formatTime from "./formatTime.js";
 
 /**
- * @param scores
+ * Create an HTML table from a score object.
+ * 
+ * @param scores An object containing score info.
+ * @returns The generated table.
  */
-function create_table(scores: any[]) {
-	let table = document.createElement("table");
+function create_table(scores: any[]): HTMLTableElement {
+	const table = document.createElement("table");
 
 	scores.sort((a, b) => a.score / a.time - b.score / b.time);
 	for (let i = 0; i < scores.length; i++) {
-		let row = table.insertRow();
-		for (let part in scores[i]) {
+		const row = table.insertRow();
+		for (const part in scores[i]) {
 			if (part === "time") {
 				row.insertCell().appendChild(document.createTextNode(formatTime(scores[i][part])));
 			} else {
@@ -20,10 +28,10 @@ function create_table(scores: any[]) {
 
 	// Inserting the header at the end takes advantage of insertRow() creating
 	// a <tbody> for us.
-	let thead = table.createTHead();
-	let header = thead.insertRow();
-	for (let part in scores[0]) {
-		let th = document.createElement("th");
+	const thead = table.createTHead();
+	const header = thead.insertRow();
+	for (const part in scores[0]) {
+		const th = document.createElement("th");
 		th.appendChild(document.createTextNode(part.replace(/\b\w/g, x => x.toUpperCase())));
 		header.appendChild(th);
 	}
@@ -32,8 +40,8 @@ function create_table(scores: any[]) {
 }
 
 window.addEventListener("load", function () {
-	let scores = Array();
-	let xhttp = new XMLHttpRequest();
+	let scores = [];
+	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === 4 && this.status === 200) {
 			scores = JSON.parse(this.responseText);
