@@ -17,17 +17,29 @@ let timer: number | undefined = undefined; // Not sure what values are never acc
 let clicks = 0;
 let rclicks = 0;
 let minefield: MineField;
+let params: {width: number, height: number, mines: number};
 
+/**
+ * Extract coordinates from <td>.
+ * 
+ * @param cell A <td> in table.
+ * @returns A coordinates object.
+ */
+function getCoordinatesByTD(cell: HTMLTableCellElement): Coordinates {
+	const coord_tuple = cell.id.split(",").map(parseInt);
+	return { x: coord_tuple[0], y: coord_tuple[1] };
+}
 
 /**
  * Get cell in minefield via the <td>.
+ * 
+ * Shorthand for minefield.at(getCoordinatesByTD());
  * 
  * @param cell A <td> in table.
  * @returns The corresponding cell in minefield.
  */
 function getCellByTD(cell: HTMLTableCellElement): Cell {
-	const coord_tuple = cell.id.split(",").map(parseInt);
-	return minefield.at({ x: coord_tuple[0], y: coord_tuple[1] });
+	return minefield.at(getCoordinatesByTD(cell));
 }
 
 /**
@@ -64,14 +76,20 @@ function uninstallCellEvents(cell: Cell | Coordinates): void {
 
 /**
  * Update minecount element.
+ * 
+ * Passing unflagged skips counting the minefield.
+ * 
+ * @param unflagged Optional number of unflagged mines.
  */
-function updateMinecount(): void {
-	let flagged = 0;
-	minefield.forEach(c => {
-		if (c.status === "F") ++flagged;
-	});
-    
-	minecount.textContent = `Mines: ${minefield.mines - flagged}`;
+function updateMinecount(unflagged?: number): void {
+	if (typeof unflagged === "undefined") {
+		let flagged = 0;
+		minefield.forEach(c => {
+			if (c.status === "F") ++flagged;
+		});
+		unflagged = minefield.mines - flagged;
+	}
+	minecount.textContent = `Mines: ${unflagged}`;
 }
 
 /**
@@ -236,24 +254,6 @@ function update_leaderboard() {
 	}));
 }
 
-// Test for HTTP-GET variables
-const searchParams = (new URL(document.URL)).searchParams;
-
-const params = {
-	width: searchParams.has("width") ? parseInt(searchParams.get("width")) : 10,
-	height: searchParams.has("height") ? parseInt(searchParams.get("height")) : 10,
-	mines: searchParams.has("mines") ? parseInt(searchParams.get("mines")) : null
-};
-
-// Param validation
-if (params.width < 1) params.width = 10;
-if (params.height < 1) params.height = 10;
-
-if (params.mines === null || params.mines >= (params.width * params.height)) {
-	const root = Math.floor(Math.sqrt(params.width * params.height));
-	params.mines = Math.floor((Math.random() * root) + root);
-}
-
 /**
  * Event handler before minefield has been planted.
  * 
@@ -264,7 +264,7 @@ if (params.mines === null || params.mines >= (params.width * params.height)) {
  */
 function populate_board(event: MouseEvent): true {
 	const td = event.currentTarget as HTMLTableCellElement;
-	const exclude = getCellByTD(td);
+	const exclude = getCoordinatesByTD(td);
 
 	// Initialize Board array
 	minefield = new MineField(params.width, params.height, exclude, params.mines);
@@ -284,10 +284,28 @@ function populate_board(event: MouseEvent): true {
 }
 
 window.onload = function () {
-	let params_form: HTMLFormElement;
+	// Test for HTTP-GET variables
+	const searchParams = (new URL(document.URL)).searchParams;
 
-	// Scope out item
+	params = {
+		width: searchParams.has("width") ? parseInt(searchParams.get("width")) : 10,
+		height: searchParams.has("height") ? parseInt(searchParams.get("height")) : 10,
+		mines: searchParams.has("mines") ? parseInt(searchParams.get("mines")) : null
+	};
 
+	// Param validation
+	if (Number.isNaN(params.width) || params.width < 1) params.width = 10;
+	if (Number.isNaN(params.height) || params.height < 1) params.height = 10;
+
+	if (Number.isNaN(params.mines)  || params.mines === null || params.mines >= (params.width * params.height)) {
+		const root = Math.floor(Math.sqrt(params.width * params.height));
+		params.mines = Math.floor((Math.random() * root) + root);
+	}
+
+	const params_form = $("#params") as HTMLFormElement;
+	minecount = $("#minecount") as HTMLParagraphElement;
+
+	
 	// Replace apology with table
 	table = document.createElement("table");
 	table.classList.add("board");
@@ -317,10 +335,10 @@ window.onload = function () {
 		document.getElementById("timer").textContent = "Time - " + formatTime(time);
 	}, 1000);
     
-	updateMinecount();
+	updateMinecount(params.mines);
 
 	// Set fields with previous values
 	for (const param in params) {
-		params_form.elements[param] = params[param];
+		params_form.elements[param].placeholder = params[param];
 	}
 };
