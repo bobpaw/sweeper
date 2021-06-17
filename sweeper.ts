@@ -33,7 +33,7 @@ function getCoordinatesByTD(cell: HTMLTableCellElement): Coordinates {
 /**
  * Get cell in minefield via the <td>.
  * 
- * Shorthand for minefield.at(getCoordinatesByTD());
+ * Shorthand for minefield.at(getCoordinatesByTD()).
  * 
  * @param cell A <td> in table.
  * @returns The corresponding cell in minefield.
