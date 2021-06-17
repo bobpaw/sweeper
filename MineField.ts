@@ -7,7 +7,6 @@
 
 type CellValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 type Coordinates = {x: number, y: number};
-type Coordinate_t = [number, number];
 
 class Cell {
 	x: number;
@@ -77,14 +76,14 @@ class MineField {
 		const ret = [] as Coordinates[];
 		const { x, y } = location;
 
-		ret.push({x: x - 1, y: y - 1}); // NW
-		ret.push({x, y: y - 1}); // N
-		ret.push({x: x + 1, y: y - 1}); // NE
-		ret.push({x: x + 1, y}); // E
-		ret.push({x: x + 1, y: y + 1}); // SE
-		ret.push({x, y: y + 1}); // S
-		ret.push({x: x - 1, y: y + 1}); // SW
-		ret.push({x: x - 1, y}); // W
+		ret.push({ x: x - 1, y: y - 1 }); // NW
+		ret.push({ x, y: y - 1 }); // N
+		ret.push({ x: x + 1, y: y - 1 }); // NE
+		ret.push({ x: x + 1, y }); // E
+		ret.push({ x: x + 1, y: y + 1 }); // SE
+		ret.push({ x, y: y + 1 }); // S
+		ret.push({ x: x - 1, y: y + 1 }); // SW
+		ret.push({ x: x - 1, y }); // W
 
 		return ret.filter(c => this.in_bounds(c)).map(c => this.at(c));
 	}
