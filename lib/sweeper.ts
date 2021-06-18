@@ -4,7 +4,7 @@
  */
 
 import { MineField, Cell, Coordinates } from "./MineField.js";
-import formatTime from "./formatTime.js";
+import { formatTime } from "./formatTime";
 
 const $ = document.querySelector.bind(document);
 

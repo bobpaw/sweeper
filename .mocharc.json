@@ -1,11 +1,16 @@
 {
   "diff": true,
-  "extension": ["js"],
+  "extension": ["ts"],
   "package": "./package.json",
   "reporter": "spec",
   "slow": 75,
   "timeout": 2000,
   "ui": "bdd",
-  "watch-files": ["test/**/*.test.js"],
-  "watch-ignore": ["lib/vendor", "node_modules"]
+  "spec": "test/**/*.test.ts",
+  "watch-files": ["lib/**/*.ts", "test/**/*.test.ts"],
+  "watch-ignore": ["lib/vendor", "node_modules"],
+  "require": [
+    "ts-node/register",
+    "source-map-support/register"
+  ]
 }

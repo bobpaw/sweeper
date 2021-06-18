@@ -3,7 +3,6 @@
   "version": "1.0.1",
   "description": "HTML5 and JavaScript Minesweeper game",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "prebuild": "npm run compile",
     "build": "npm run build:sass",
@@ -20,9 +19,9 @@
     "prepare": "husky install",
     "prestart:dev": "npm run build",
     "start:dev": "http-server -a localhost -g -b",
-    "pretest": "npm run lint && npm run build",
+    "pretest": "npm run lint",
     "test": "mocha",
-    "test:cov": "nyc --reporter=html --reporter=text npm test"
+    "test:cov": "nyc npm test"
   },
   "repository": {
     "type": "git",
@@ -46,6 +45,7 @@
     "typescript": "^4.3.2"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/chai": "^4.2.18",
     "@types/mocha": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
@@ -59,7 +59,9 @@
     "lint-staged": "^11.0.0",
     "mocha": "^9.0.0",
     "nyc": "^15.1.0",
-    "sinon": "^11.1.1"
+    "sinon": "^11.1.1",
+    "source-map-support": "^0.5.19",
+    "ts-node": "^10.0.0"
   },
   "husky": {
     "hooks": {
@@ -68,5 +70,14 @@
   },
   "lint-staged": {
     "*.{js,ts}": "npm run lint:fix"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "check-coverage": true,
+    "reporter": [
+      "html",
+      "text"
+    ]
   }
 }

@@ -7,7 +7,9 @@
     "noEmitOnError": true,
     "composite": true
   },
+  "files": [],
   "references": [
-    {"path": "lib"}
+    {"path": "lib"},
+    {"path": "test"}
   ]
 }

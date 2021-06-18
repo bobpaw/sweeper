@@ -3,7 +3,7 @@
  * @author Aiden Woodruff
  */
 
-import formatTime from "./formatTime.js";
+import { formatTime } from "./formatTime";
 
 /**
  * Create an HTML table from a score object.

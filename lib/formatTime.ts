@@ -17,7 +17,7 @@
  * @example
  * formatTime(3706); // "1:01:46"
  */
-export default function formatTime(time: number): string {
+export function formatTime(time: number): string {
 	const seconds = time % 60;
 	time = Math.floor(time / 60);
 	const minutes = time % 60;
