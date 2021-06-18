@@ -44,7 +44,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      node-version: latest
+      matrix:
+        node-version: latest
     
     steps:
     - uses: action/checkout@v2
@@ -58,8 +59,8 @@ jobs:
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      restore-keys: |
-        ${{ runner.os }}-node-
+        restore-keys: |
+          ${{ runner.os }}-node-
     - name: npm ci
       if: steps.cache-npm.outputs.cache-hit != true
       run: npm ci
