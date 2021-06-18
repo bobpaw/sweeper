@@ -3,7 +3,8 @@
     "target": "es6",
     "watch": true,
     "lib": [ "dom", "es2019" ],
-    "removeComments": true
+    "removeComments": true,
+    "noEmitOnError": true
   },
   "files": [
     "leaders.ts",
