@@ -12,6 +12,7 @@
     "clean:ts": "tsc -b --clean",
     "compile": "npm run compile:ts",
     "compile:ts": "tsc -b",
+    "precoverage": "npm run test:cov",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint --cache --cache-location .eslintcache --ext .ts .eslintrc.json .",
     "lint-fix": "eslint --cache --cache-location .eslintcache --ext .ts --fix .eslintrc.json .",
@@ -19,7 +20,8 @@
     "prestart:dev": "npm run build",
     "start:dev": "http-server -a localhost -g -b",
     "pretest": "npm run lint",
-    "test": "nyc --reporter=html --reporter=text mocha"
+    "test": "mocha",
+    "test:cov": "nyc --reporter=html --reporter=text mocha"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,8 @@
     "typescript": "^4.3.2"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.18",
+    "@types/mocha": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.26.1",
     "chai": "^4.3.4",
