@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "HTML5 and JavaScript Minesweeper game",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "prebuild": "npm run compile",
     "build": "npm run build:sass",
@@ -19,9 +20,9 @@
     "prepare": "husky install",
     "prestart:dev": "npm run build",
     "start:dev": "http-server -a localhost -g -b",
-    "pretest": "npm run lint",
+    "pretest": "npm run lint && npm run build",
     "test": "mocha",
-    "test:cov": "nyc --reporter=html --reporter=text mocha"
+    "test:cov": "nyc --reporter=html --reporter=text npm test"
   },
   "repository": {
     "type": "git",

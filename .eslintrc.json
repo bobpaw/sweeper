@@ -18,7 +18,8 @@
 		"jsdoc"
 	],
 	"ignorePatterns": [
-		"out/"
+		"out/",
+		"**/*.d.ts"
 	],
 	"rules": {
 		"indent": [
