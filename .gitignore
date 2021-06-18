@@ -12,9 +12,13 @@ leaderboard.json
 # Node
 node_modules/
 
-# Generated JavaScript
+# Generated Files
 *.js
 *.css
+
+# Generator (ts, sass) data
+*.d.ts
+*.tsbuildinfo
 *.css.map
 
 .eslintcache
