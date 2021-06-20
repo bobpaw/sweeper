@@ -19,4 +19,11 @@ describe("MineField", function () {
 	it("should not have a mine at (4, 5)", () => {
 		expect(mf.at({ x: 4, y: 5 }).value).to.not.equal(9);
 	});
+
+	it("should return the same object", () => {
+		expect(mf.field[6][7].status).to.equal("U");
+		mf.at({ x: 7, y: 6 }).status = "R";
+		expect(mf.field[6][7].status).to.equal("R");
+		mf.at({ x: 7, y: 6 }).status = "U";
+	});
 });
