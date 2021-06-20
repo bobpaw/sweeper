@@ -37,29 +37,21 @@ jobs:
     - name: npm ci
       if: steps.cache-npm.outputs.cache-hit != true
       run: npm ci
-    - run: npm test
-  coverage:
+    - run: npm run test:cov
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel: true
+        flag-name: Node ${{ matrix.node-version }}
+
+  finish:
     needs: build
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 14.x
-      uses: actions/setup-node@v2
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
       with:
-        node-version: '14.x'
-    - name: Cache
-      id: cache-npm
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: npm ci
-      if: steps.cache-npm.outputs.cache-hit != true
-      run: npm ci
-    - run: npm run build
-    - run: npm run coverage
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
