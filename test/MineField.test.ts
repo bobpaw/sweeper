@@ -22,10 +22,7 @@ describe("MineField", function () {
 
 	describe("at(Coordinates)", function () {
 		it("should return the same object", () => {
-			expect(mf.field[6][7].status).to.equal("U");
-			mf.at({ x: 7, y: 6 }).status = "R";
-			expect(mf.field[6][7].status).to.equal("R");
-			mf.at({ x: 7, y: 6 }).status = "U";
+			expect(mf.at({ x: 7, y: 6 })).to.equal(mf.field[6][7]);
 		});
 	});
 
@@ -54,5 +51,5 @@ describe("MineField", function () {
 			});
 			expect(count).to.equal(8);
 		});
-	});
+	}); 
 });
