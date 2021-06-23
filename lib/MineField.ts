@@ -99,7 +99,6 @@ class MineField {
 
 		const _flood = (c: Cell) => {
 			visited.push(c);
-			console.log(`(${c.x}, ${c.y})`);
 			func(c);
 
 			if (c.value === 0)
@@ -114,15 +113,17 @@ class MineField {
 	score3BV(): number {
 		let score = 0;
 		
-		this.field.flat().filter(cell => cell.value === 0).forEach(cell => {
-			if (!cell._marked) {
+		this.forEach(cell => {
+			if (cell.value === 0 && !cell._marked) {
 				++score;
 				this.floodToNumbers(cell, c => { this.at(c)._marked = true; });
 			}
 		});
 
-		score += this.field.flat().filter(c => !c._marked && c.value !== 9).length;
-		// Who ever heard of .map().reduce()?
+		this.forEach(c => {
+			if (!c._marked && c.value !== 9) ++score;
+		});
+		// TODO: replace with count function
 		return score;
 	}
 
