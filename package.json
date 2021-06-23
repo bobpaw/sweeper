@@ -2,7 +2,7 @@
   "name": "sweeper",
   "version": "1.0.1",
   "description": "HTML5 and JavaScript Minesweeper game",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "prebuild": "npm run compile",
     "build": "npm run build:sass",
@@ -18,7 +18,7 @@
     "lint-fix": "eslint --cache --cache-location .eslintcache --ext .ts --fix .eslintrc.json .",
     "prepare": "husky install",
     "prestart:dev": "npm run build",
-    "start:dev": "http-server -a localhost -g -b",
+    "start": "http-server -a localhost -g -b",
     "pretest": "npm run clean:ts && npm run lint",
     "test": "mocha",
     "test:cov": "nyc npm test"
