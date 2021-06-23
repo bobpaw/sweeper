@@ -20,9 +20,9 @@ let minefield: MineField;
 let params: {width: number, height: number, mines: number};
 
 /**
- * Extract coordinates from <td>.
+ * Extract coordinates from \<td\>.
  * 
- * @param cell A <td> in table.
+ * @param cell A \<td\> in table.
  * @returns A coordinates object.
  */
 function getCoordinatesByTD(cell: HTMLTableCellElement): Coordinates {
@@ -31,11 +31,11 @@ function getCoordinatesByTD(cell: HTMLTableCellElement): Coordinates {
 }
 
 /**
- * Get cell in minefield via the <td>.
+ * Get cell in minefield via the \<td\>.
  * 
  * Shorthand for minefield.at(getCoordinatesByTD()).
  * 
- * @param cell A <td> in table.
+ * @param cell A \<td\> in table.
  * @returns The corresponding cell in minefield.
  */
 function getCellByTD(cell: HTMLTableCellElement): Cell {
@@ -43,19 +43,19 @@ function getCellByTD(cell: HTMLTableCellElement): Cell {
 }
 
 /**
- * Get <td> via cell in minefield.
+ * Get \<td\> via cell in minefield.
  * 
  * @param cell A cell object in minefield.
- * @returns The corresponding <td> in table.
+ * @returns The corresponding \<td\> in table.
  */
 function getTDByCell(cell: Cell | Coordinates): HTMLTableCellElement {
 	return table.rows[cell.y].cells[cell.x];
 }
 
 /**
- * Install <td> event listeners.
+ * Install \<td\> event listeners.
  * 
- * @param cell The cell corresponding to the <td>.
+ * @param cell The cell corresponding to the \<td\>.
  */
 function installCellEvents(cell: Cell | Coordinates): void {
 	const td = getTDByCell(cell); // TODO: Maybe change to accepting td as param?
@@ -64,9 +64,9 @@ function installCellEvents(cell: Cell | Coordinates): void {
 }
 
 /**
- * Uninstall <td> event listeners.
+ * Uninstall \<td\> event listeners.
  *
- * @param cell The cell corresponding to the <td>.
+ * @param cell The cell corresponding to the \<td\>.
  */
 function uninstallCellEvents(cell: Cell | Coordinates): void {
 	const td = getTDByCell(cell);
@@ -129,7 +129,7 @@ function lose(): void {
 /**
  * Reveal a cell in the minefield.
  * 
- * Updates Cell and <td>.
+ * Updates Cell and \<td\>.
  * 
  * @param cell The cell to reveal.
  */
@@ -144,7 +144,7 @@ function revealCell(cell: Cell): void {
 		// being double revealed right now.
 
 	td.classList.remove("flagged");
-	td.classList.remove("unflagged");
+	td.classList.remove("unrevealed");
 	td.classList.add("revealed");
 	uninstallCellEvents(cell);
 }
@@ -188,7 +188,7 @@ function revealCallback(event: MouseEvent): boolean {
  * Event handler to flag a cell.
  * 
  * @param event The MouseEvent that triggered me.
- * @returns Boolean indicating failure if the <td> is revealed. Success otherwise.
+ * @returns Boolean indicating failure if the \<td\> is revealed. Success otherwise.
  */
 function flag(event: MouseEvent): boolean {
 	++rclicks;

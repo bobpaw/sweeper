@@ -105,5 +105,9 @@ describe("MineField", function () {
 
 			expect(revealed_count).to.equal(13);
 		});
+
+		it("should not have modified any values", () => {
+			expect(flood_mf.every(c => c.value === test_values[c.y * flood_mf.width + c.x])).to.be.true;
+		});
 	});
 });
