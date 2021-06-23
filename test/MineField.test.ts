@@ -58,4 +58,13 @@ describe("MineField", function () {
 			expect(mf.every(c => c.status === "U")).to.be.true;
 		});
 	});
+
+	describe("score3BV", function () {
+		const test_values = [0, 1, 1, 1, 1, 9, 2, 1, 1, 0, 0, 1, 9, 1, 1, 1, 2, 9, 2, 1, 0, 1, 1, 1, 0, 0, 1, 2, 9, 1, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 1, 2, 2, 9, 1, 0, 1, 1, 2, 9, 9, 2, 9, 2, 1, 1, 2, 9, 2, 1, 1, 2, 1, 1, 0, 1, 9, 3, 2, 1, 0, 0, 0, 0, 0, 1, 1, 2, 9, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0] as const;
+		const mf3 = new MineField(10, 10, { x: 0, y: 0 }, test_values.filter(v => v === 9).length);
+		mf3.forEach(c => {
+			c.value = test_values[c.y * mf3.width + c.x];
+		});
+		expect(mf3.score3BV()).to.equal(20);
+	});
 });
