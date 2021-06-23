@@ -74,6 +74,9 @@ describe("MineField", function () {
 
 	describe("floodToNumbers", function () {
 		const flood_mf = new MineField(10, 10, { x: 0, y: 0 }, test_values.filter(v => v === 9).length);
+		flood_mf.forEach(c => {
+			c.value = test_values[c.y * flood_mf.width + c.x];
+		});
 
 		it("should only reveal stuff around the top left", () => {
 			flood_mf.floodToNumbers(flood_mf.at({ x: 0, y: 0 }), c => {
