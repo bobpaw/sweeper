@@ -94,11 +94,20 @@ class MineField {
 		return this.field.length;
 	}
 
-	floodToNumbers(cell: Cell | Coordinates, func: (c: Cell) => void): void {
-		func(this.at(cell));
+	floodToNumbers(cell: Cell, func: (c: Cell) => void): void {
+		const visited = [] as Cell[];
 
-		if (this.at(cell).value === 0)
-			this.surrounding(cell).forEach(c => this.floodToNumbers(c, func));
+		const _flood = (c: Cell) => {
+			visited.push(c);
+			func(c);
+
+			if (c.value === 0)
+				this.surrounding(c).forEach(x => {
+					if (!visited.includes(x))	_flood(x);
+				});
+		};
+
+		_flood(cell);
 	}
 
 	score3BV(): number {
