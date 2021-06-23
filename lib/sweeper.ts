@@ -139,7 +139,9 @@ function revealCell(cell: Cell): void {
 
 	const td = getTDByCell(cell);
 	if (cell.value !== 0)
-		td.append(cell.value.toString());
+		td.textContent = cell.value.toString();
+		// FIXME: td.append is probably more accurate but cells are currently
+		// being double revealed right now.
 
 	td.classList.remove("flagged");
 	td.classList.remove("unflagged");
