@@ -99,6 +99,7 @@ class MineField {
 
 		const _flood = (c: Cell) => {
 			visited.push(c);
+			console.log(`(${c.x}, ${c.y})`);
 			func(c);
 
 			if (c.value === 0)
