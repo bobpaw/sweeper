@@ -51,5 +51,11 @@ describe("MineField", function () {
 			});
 			expect(count).to.equal(8);
 		});
-	}); 
+	});
+
+	describe("every(pred)", function () {
+		it("should all be unrevealed", () => {
+			expect(mf.every(c => c.status === "U")).to.be.true;
+		});
+	});
 });

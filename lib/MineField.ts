@@ -56,12 +56,10 @@ class MineField {
 		}
 
 		// Calculate values around mines
-		for (let y = 0; y < height; ++y) {
-			for (let x = 0; x < width; ++x) {
-				if (this.at({ x, y }).value === 9) continue;
-				this.at({ x, y }).value = this.surrounding({ x, y }).map((x): number => x.value === 9 ? 1 : 0).reduce((a, b) => a+b) as CellValue;
-			}
-		}
+		this.forEach(cell => {
+			if (cell.value !== 9)
+				cell.value = this.surrounding(cell).filter(c => c.value === 9).length as CellValue;
+		});
 	}
 
 	at(location: Coordinates): Cell {
