@@ -245,7 +245,7 @@ function update_leaderboard() {
 	xhttp.open("POST", "ud_leaderboard.php", true);
 	xhttp.setRequestHeader("Content-Type", "application/json");
 	xhttp.send(JSON.stringify({
-		name: (<HTMLInputElement>$("name")).value,
+		name: (<HTMLInputElement>$("#name")).value,
 		time: time,
 		width: minefield.width,
 		height: minefield.height,
@@ -287,21 +287,35 @@ window.onload = function () {
 	const searchParams = (new URL(document.URL)).searchParams;
 
 	params = {
-		width: searchParams.has("width") ? parseInt(searchParams.get("width")) : 10,
-		height: searchParams.has("height") ? parseInt(searchParams.get("height")) : 10,
-		mines: searchParams.has("mines") ? parseInt(searchParams.get("mines")) : null
+		width: searchParams.has("width") && searchParams.get("width").length > 0 ? parseInt(searchParams.get("width")) : 10,
+		height: searchParams.has("height") && searchParams.get("height").length > 0 ? parseInt(searchParams.get("height")) : 10,
+		mines: searchParams.has("mines") && searchParams.get("width").length > 0 ? parseInt(searchParams.get("mines")) : null
 	};
 
+	const params_form = $("#params") as HTMLFormElement;
+
 	// Param validation
-	if (Number.isNaN(params.width) || params.width < 1) params.width = 10;
-	if (Number.isNaN(params.height) || params.height < 1) params.height = 10;
+	if (Number.isNaN(params.width) || params.width < 1) {
+		params.width = 10;
+		params_form.elements["width"].placeholder = params.width;
+	} else {
+		params_form.elements["width"].value = params.width;
+	}
+
+	if (Number.isNaN(params.height) || params.height < 1) {
+		params.height = 10;
+		params_form.elements["height"].placeholder = params.height;
+	} else {
+		params_form.elements["height"].value = params.height;
+	}
 
 	if (Number.isNaN(params.mines)  || params.mines === null || params.mines >= (params.width * params.height)) {
 		const root = Math.floor(Math.sqrt(params.width * params.height));
 		params.mines = Math.floor((Math.random() * root) + root);
+	} else {
+		params_form.elements["mines"].value = params.mines;
 	}
 
-	const params_form = $("#params") as HTMLFormElement;
 	minecount = $("#minecount") as HTMLParagraphElement;
 	click_form = $("#clicktype_form") as HTMLFormElement;
 
@@ -336,9 +350,4 @@ window.onload = function () {
 	}, 1000);
     
 	updateMinecount(params.mines);
-
-	// Set fields with previous values
-	for (const param in params) {
-		params_form.elements[param].placeholder = params[param];
-	}
 };
