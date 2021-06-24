@@ -171,6 +171,7 @@ function revealCallback(event: MouseEvent) {
 	if (cell.value === 9) {
 		// TODO: Replace with mine image
 		td.textContent = "M";
+		if (cell.status === "F") td.classList.remove("flagged");
 		td.classList.add("wrong");
 		lose();
 
@@ -180,7 +181,7 @@ function revealCallback(event: MouseEvent) {
 	
 	updateMinecount();
 
-	if (minefield.every(c => c.value !== 9 && c.status === "R")) win();
+	if (minefield.every(c => c.value === 9 || c.status === "R")) win();
 }
 
 /**
