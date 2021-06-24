@@ -1,0 +1,44 @@
+$cell-size: 20px;
+
+table.board {
+  border-spacing: 0;
+  outline: 1px solid black;
+  tr {
+      white-space: nowrap;
+  }
+
+  td {
+      display: inline-block;
+      text-align: center;
+      width: $cell-size;
+      height: $cell-size;
+      border: 1px solid black;
+      &.unrevealed {
+          cursor: pointer;
+          background-color: #e6e6e6;
+      }
+
+      &.revealed {
+          cursor: default;
+          background-color: #c6c6c6;
+      }
+
+      &.flagged {
+          cursor: pointer;
+          background-color: #c6c6c6;
+          background-image: url("../images/flag.svg");
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+      }
+
+      &.wrong {
+          cursor: default;
+          background-color: #ff0000;
+      }
+
+      &.correct {
+          background-color: #00ff00;
+      }
+  }
+}
