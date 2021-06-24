@@ -15,12 +15,14 @@
     "compile:ts": "tsc -b",
     "precoverage": "npm run test:cov",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "lint": "eslint --cache --cache-location .eslintcache --ext .ts .eslintrc.json .",
-    "lint-fix": "eslint --cache --cache-location .eslintcache --ext .ts --fix .eslintrc.json .",
+    "lint:js": "eslint --cache --ext .ts .",
+    "lint:css": "stylelint --cache css/**.scss",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint-fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
     "prepare": "husky install",
     "prestart:dev": "npm run build",
     "start:dev": "http-server -a localhost -g -b",
-    "pretest": "npm run clean:ts && npm run lint",
+    "pretest": "npm run clean:ts && npm run lint:js",
     "test": "mocha",
     "test:cov": "nyc npm test"
   },
@@ -61,6 +63,8 @@
     "nyc": "^15.1.0",
     "sinon": "^11.1.1",
     "source-map-support": "^0.5.19",
+    "stylelint": "^13.13.1",
+    "stylelint-config-sass-guidelines": "^8.0.0",
     "ts-node": "^10.0.0"
   },
   "husky": {
@@ -79,5 +83,8 @@
       "text",
       "lcov"
     ]
-  }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-sass-guidelines"
+  }  
 }
