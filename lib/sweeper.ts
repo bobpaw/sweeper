@@ -313,7 +313,7 @@ window.onload = function () {
 	}
 
 	minecount = $("#minecount") as HTMLParagraphElement;
-	click_form = $("#clicktype_form") as HTMLFormElement;
+	click_form = $("#clicktype-form") as HTMLFormElement;
 
 	
 	// Replace apology with table

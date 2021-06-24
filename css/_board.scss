@@ -2,43 +2,45 @@ $cell-size: 20px;
 
 table.board {
   border-spacing: 0;
-  outline: 1px solid black;
+  outline: 1px solid rgb(0, 0, 0);
+
   tr {
-      white-space: nowrap;
+    white-space: nowrap;
   }
 
   td {
-      display: inline-block;
-      text-align: center;
-      width: $cell-size;
-      height: $cell-size;
-      border: 1px solid black;
-      &.unrevealed {
-          cursor: pointer;
-          background-color: #e6e6e6;
-      }
+    border: 1px solid rgb(0, 0, 0);
+    display: inline-block;
+    height: $cell-size;
+    text-align: center;
+    width: $cell-size;
 
-      &.revealed {
-          cursor: default;
-          background-color: #c6c6c6;
-      }
+    &.unrevealed {
+      background-color: rgb(230, 230, 230);
+      cursor: pointer;
+    }
 
-      &.flagged {
-          cursor: pointer;
-          background-color: #c6c6c6;
-          background-image: url("../images/flag.svg");
-          background-size: contain;
-          background-position: center;
-          background-repeat: no-repeat;
-      }
+    &.revealed {
+      background-color: rgb(198, 198, 198);
+      cursor: default;
+    }
 
-      &.wrong {
-          cursor: default;
-          background-color: #ff0000;
-      }
+    &.flagged {
+      background-color: rgb(198, 198, 198);
+      background-image: url("../images/flag.svg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      cursor: pointer;
+    }
 
-      &.correct {
-          background-color: #00ff00;
-      }
+    &.wrong {
+      background-color: rgb(255, 0, 0);
+      cursor: default;
+    }
+
+    &.correct {
+      background-color: rgb(0, 255, 0);
+    }
   }
 }
