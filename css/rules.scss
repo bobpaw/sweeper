@@ -1,11 +1,11 @@
 @import "board";
 
-div.exboard {
+.exboard {
   padding: 10px;
 }
 
-td.unrevealed,
-td.flagged {
+.unrevealed,
+.flagged {
   cursor: default;
 }
 
