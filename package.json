@@ -6,9 +6,9 @@
   "scripts": {
     "prebuild": "npm run compile",
     "build": "npm run build:sass",
-    "build:sass": "sass styles.scss styles.css",
+    "build:sass": "sass css:css",
     "clean": "npm run clean:ts && npm run clean:sass && npm run clean:cov",
-    "clean:sass": "rimraf styles.css styles.css.map",
+    "clean:sass": "rimraf css/styles.css css/styles.css.map",
     "clean:ts": "tsc -b --clean",
     "clean:cov": "rimraf .nyc_output/ coverage/",
     "compile": "npm run compile:ts",
