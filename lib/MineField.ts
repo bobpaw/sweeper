@@ -120,10 +120,7 @@ class MineField {
 			}
 		});
 
-		this.forEach(c => {
-			if (!c._marked && c.value !== 9) ++score;
-		});
-		// TODO: replace with count function
+		score += this.count(c => !c._marked && c.value !== 9);
 		return score;
 	}
 
@@ -191,6 +188,12 @@ class MineField {
 			}
 		}
 		return ret;
+	}
+
+	count(pred: (cell: Cell) => boolean): number {
+		let count = 0;
+		this.forEach(c => { if (pred(c)) ++count; });
+		return count;
 	}
 }
 

@@ -83,11 +83,7 @@ function uninstallCellEvents(cell: Cell | Coordinates): void {
  */
 function updateMinecount(unflagged?: number): void {
 	if (typeof unflagged === "undefined") {
-		let flagged = 0;
-		minefield.forEach(c => {
-			if (c.status === "F") ++flagged;
-		});
-		unflagged = minefield.mines - flagged;
+		unflagged = minefield.mines - minefield.count(c => c.status === "F");
 	}
 	minecount.textContent = `Mines: ${unflagged}`;
 }

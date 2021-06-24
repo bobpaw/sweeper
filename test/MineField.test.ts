@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import { MineField, Coordinates, Cell } from "../lib/MineField";
+import { MineField, } from "../lib/MineField";
 
 describe("MineField", function () {
 	const mf = new MineField(10, 10, { x: 4, y: 5 }, 9);
@@ -83,7 +83,7 @@ describe("MineField", function () {
 				if (c.status === "R") return;
 				c.status = "R";
 			});
-			// TODO: Exhaustively check each one
+
 			expect(flood_mf.at({ x: 0, y: 0 }).status, "0, 0").to.equal("R");
 			expect(flood_mf.at({ x: 1, y: 0 }).status, "1, 0").to.equal("R");
 			expect(flood_mf.at({ x: 0, y: 1 }).status, "0, 1").to.equal("R");
@@ -98,12 +98,7 @@ describe("MineField", function () {
 			expect(flood_mf.at({ x: 1, y: 4 }).status, "1, 4").to.equal("R");
 			expect(flood_mf.at({ x: 2, y: 4 }).status, "2, 4").to.equal("R");
 
-			let revealed_count = 0;
-			flood_mf.forEach(c => {
-				if (c.status === "R") ++revealed_count;
-			});
-
-			expect(revealed_count).to.equal(13);
+			expect(flood_mf.count(c => c.status === "R")).to.equal(13);
 		});
 
 		it("should not have modified any values", () => {
