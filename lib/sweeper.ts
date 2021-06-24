@@ -155,12 +155,12 @@ function revealCell(cell: Cell): void {
  * If the click type is set to flag, calls flag().
  * 
  * @param event The MouseEvent that triggered me.
- * @returns True or the return value of flag().
  */
-function revealCallback(event: MouseEvent): boolean {
+function revealCallback(event: MouseEvent) {
 	// If in flag mode run flag instead
 	if (click_form.elements["clicktype"].value === "flag") {
-		return flag(event);
+		flag(event);
+		return;
 	}
 
 	++clicks;
@@ -181,7 +181,6 @@ function revealCallback(event: MouseEvent): boolean {
 	updateMinecount();
 
 	if (minefield.every(c => c.value !== 9 && c.status === "R")) win();
-	return true;
 }
 
 /**
@@ -262,10 +261,9 @@ function update_leaderboard() {
  * Doing it in two steps like this allows exclusion of a specific cell.
  * 
  * @param event The MouseEvent that triggers me.
- * @returns True.
  */
-function populate_board(event: MouseEvent): true {
-	const td = event.currentTarget as HTMLTableCellElement;
+function populate_board(event: MouseEvent) {
+	const td = event.target as HTMLTableCellElement;
 	const exclude = getCoordinatesByTD(td);
 
 	// Initialize Board array
@@ -281,8 +279,6 @@ function populate_board(event: MouseEvent): true {
 	// FIXME: might be an error to trigger an event from an event
 	// Hopefully the `once` unregisters this first.
 	td.click();
-
-	return true;
 }
 
 window.onload = function () {
@@ -329,7 +325,7 @@ window.onload = function () {
 			const data = row.insertCell();
 			data.id = `${x},${y}`;
 			data.className = "unrevealed";
-			data.addEventListener("click", populate_board, { once: true });
+			table.addEventListener("click", populate_board, { once: true });
 		}
 	}
 
