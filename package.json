@@ -8,7 +8,7 @@
     "build": "npm run build:sass",
     "build:sass": "sass styles.scss styles.css",
     "clean": "npm run clean:ts && npm run clean:sass",
-    "clean:sass": "rimraf styles.css",
+    "clean:sass": "rimraf styles.css styles.css.map",
     "clean:ts": "tsc -b --clean",
     "compile": "npm run compile:ts",
     "compile:ts": "tsc -b",
