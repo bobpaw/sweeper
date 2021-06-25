@@ -94,7 +94,7 @@ function updateMinecount(unflagged?: number): void {
 function win(): void {
 	minefield.forEach(c => {
 		if (c.status === "F") {
-			getTDByCell(c).classList.add("correct");
+			getTDByCell(c).classList.add("field__cell--correct");
 			uninstallCellEvents(c);
 		}
 	});
@@ -139,9 +139,8 @@ function revealCell(cell: Cell): void {
 		// FIXME: td.append is probably more accurate but cells are currently
 		// being double revealed right now.
 
-	td.classList.remove("flagged");
-	td.classList.remove("unrevealed");
-	td.classList.add("revealed");
+	td.classList.remove("field__cell--flagged");
+	td.classList.add("field__cell--revealed");
 	uninstallCellEvents(cell);
 }
 
@@ -167,8 +166,8 @@ function revealCallback(event: MouseEvent) {
 	if (cell.value === 9) {
 		// TODO: Replace with mine image
 		td.textContent = "M";
-		if (cell.status === "F") td.classList.remove("flagged");
-		td.classList.add("wrong");
+		if (cell.status === "F") td.classList.remove("field__cell--flagged");
+		td.classList.add("field__cell--wrong");
 		lose();
 
 	} else {
@@ -196,14 +195,12 @@ function flag(event: MouseEvent): boolean {
 	switch (cell.status) {
 	case "F":
 		cell.status = "U";
-		td.classList.remove("flagged");
-		td.classList.add("unrevealed");
+		td.classList.remove("field__cell--flagged");
 		updateMinecount();
 		return true;
 	case "U":
 		cell.status = "F";
-		td.classList.remove("unrevealed");
-		td.classList.add("flagged");
+		td.classList.add("field__cell--flagged");
 		updateMinecount();
 		return true;
 	case "R":
@@ -266,12 +263,7 @@ function populate_board(event: MouseEvent) {
 	// Initialize Board array
 	minefield = new MineField(params.width, params.height, exclude, params.mines);
 
-	minefield.forEach(c => {
-		if (c.value === 9) {
-			getTDByCell(c).className = "unrevealed mine";
-		}
-		installCellEvents(c);
-	});
+	minefield.forEach(installCellEvents);
 
 	// FIXME: might be an error to trigger an event from an event
 	// Hopefully the `once` unregisters this first.
@@ -318,7 +310,7 @@ window.onload = function () {
 	
 	// Replace apology with table
 	table = document.createElement("table");
-	table.classList.add("board");
+	table.classList.add("field");
 	table.id = "board";
 	$("#content").insertBefore(table, $("#apology"));
 	$("#content").removeChild($("#apology"));
@@ -335,7 +327,7 @@ window.onload = function () {
 		for (let x = 0; x < params.width; x++) {
 			const data = row.insertCell();
 			data.id = `${x},${y}`;
-			data.className = "unrevealed";
+			data.className = "field__cell";
 			table.addEventListener("click", populate_board, { once: true });
 		}
 	}

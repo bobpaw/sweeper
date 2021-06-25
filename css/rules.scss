@@ -1,12 +1,11 @@
-@import "board";
+@import "field";
 
-.exboard {
-  padding: 10px;
-}
+.field.example {
+  margin: 10px;
 
-.unrevealed,
-.flagged {
-  cursor: default;
+  .field__cell {
+    cursor: default;
+  }
 }
 
 .thick {
