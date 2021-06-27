@@ -1,13 +1,25 @@
 @import "field";
 
-.field.example {
-  margin: 10px;
-
+.field {
   .field__cell {
     cursor: default;
   }
 }
 
+.example {
+  padding: 10px;
+}
+
 .thick {
   font-weight: bold;
+}
+
+.field__cell--mine {
+  @extend .thick;
+  @extend .field__cell--revealed;
+  opacity: 0.5;
+
+  &::after {
+    content: "M";
+  }
 }
