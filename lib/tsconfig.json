@@ -3,11 +3,5 @@
   "compilerOptions": {
     "module": "ES2015"
   },
-  "files": [
-    "leaders.ts",
-    "sweeper.ts",
-    "MineField.ts",
-    "formatTime.ts",
-    "rules.ts"
-  ]
+  "include": [ "**/*.ts" ]
 }
