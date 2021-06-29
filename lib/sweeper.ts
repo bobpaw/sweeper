@@ -16,7 +16,16 @@ let minecount: HTMLParagraphElement;
 let timer: number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
 let minefield: MineField;
 let params: {width: number, height: number, mines: number};
-let score_entry: Score;
+const score_entry: Score = {
+	name: "",
+	time: 0,
+	width: -1,
+	height: -1,
+	mines: -1,
+	rclicks: 0,
+	clicks: 0,
+	board_score: -1
+};
 
 /**
  * Extract coordinates from \<td\>.
