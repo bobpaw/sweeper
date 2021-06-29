@@ -4,6 +4,7 @@
  */
 
 import { formatTime } from "./formatTime";
+import type { Score } from "./score";
 
 /**
  * Create an HTML table from a score object.
@@ -11,10 +12,10 @@ import { formatTime } from "./formatTime";
  * @param scores An object containing score info.
  * @returns The generated table.
  */
-function create_table(scores: any[]): HTMLTableElement {
+function create_table(scores: Score[]): HTMLTableElement {
 	const table = document.createElement("table");
 
-	scores.sort((a, b) => a.score / a.time - b.score / b.time);
+	scores.sort((a, b) => a.board_score / a.time - b.board_score / b.time);
 	for (let i = 0; i < scores.length; i++) {
 		const row = table.insertRow();
 		for (const part in scores[i]) {
@@ -40,7 +41,7 @@ function create_table(scores: any[]): HTMLTableElement {
 }
 
 window.addEventListener("load", function () {
-	let scores = [];
+	let scores: Score[] = [];
 	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === 4 && this.status === 200) {
