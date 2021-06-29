@@ -3,7 +3,7 @@
  * @author Aiden Woodruff
  */
 
-import { formatTime } from "./formatTime";
+import { formatTime } from "./formatTime.js";
 import type { Score } from "./score";
 
 /**
