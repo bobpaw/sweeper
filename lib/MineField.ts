@@ -138,42 +138,6 @@ class MineField {
 		}
 	}
 
-
-	/**.
-	 * Emulate Array.map
-	 * 
-	 * @param func A function to execute on each cell
-	 * @returns An array containing the result of func() calls.
-	 * @deprecated
-	 */
-	mapToArray<T>(func: (cell: Cell) => T): T[] {
-		const array: T[] = [];
-		for (let y = 0; y < this.height; ++y) {
-			for (let x = 0; x < this.width; ++x) {
-				array.push(func(this.at({ x, y })));
-			}
-		}
-		return array;
-	}
-
-
-	/**.
-	 * Emulate Array.filter
-	 * 
-	 * @param pred A function to test each cell against
-	 * @returns An array containing cells for which pred(cell) is true.
-	 * @deprecated
-	 */
-	filterToArray(pred: (cell: Cell) => boolean): Cell[] {
-		const array: Cell[] = [];
-		for (let y = 0; y < this.height; ++y) {
-			for (let x = 0; x < this.width; ++x) {
-				if (pred(this.at({ x, y }))) array.push(this.at({ x, y }));
-			}
-		}
-		return array;
-	}
-
 	/**
 	 * Test if an expression is true for every cell.
 	 * 
