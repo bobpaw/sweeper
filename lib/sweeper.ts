@@ -5,6 +5,7 @@
 
 import { MineField, Cell, Coordinates } from "./MineField.js";
 import { formatTime } from "./formatTime.js";
+import type { Score } from "./score";
 
 const $ = document.querySelector.bind(document);
 
@@ -12,12 +13,10 @@ const $ = document.querySelector.bind(document);
 let table: HTMLTableElement;
 let click_form: HTMLFormElement;
 let minecount: HTMLParagraphElement;
-let time = 0;
 let timer: number | undefined = undefined; // Not sure what values are never accepted by window.clearInterval, so just use undefined
-let clicks = 0;
-let rclicks = 0;
 let minefield: MineField;
 let params: {width: number, height: number, mines: number};
+let score_entry: Score;
 
 /**
  * Extract coordinates from \<td\>.
@@ -158,7 +157,7 @@ function revealCallback(event: MouseEvent) {
 		return;
 	}
 
-	++clicks;
+	++score_entry.clicks;
 	
 	const td = event.currentTarget as HTMLTableCellElement;
 	const cell = getCellByTD(td);
@@ -186,7 +185,7 @@ function revealCallback(event: MouseEvent) {
  * @returns Boolean indicating failure if the \<td\> is revealed. Success otherwise.
  */
 function flag(event: MouseEvent): boolean {
-	++rclicks;
+	++score_entry.rclicks;
 	event.preventDefault();
 
 	const td = event.currentTarget as HTMLTableCellElement;
@@ -237,16 +236,9 @@ function update_leaderboard() {
 	};
 	xhttp.open("POST", "ud_leaderboard.php", true);
 	xhttp.setRequestHeader("Content-Type", "application/json");
-	xhttp.send(JSON.stringify({
-		name: (<HTMLInputElement>$("#name")).value,
-		time: time,
-		width: minefield.width,
-		height: minefield.height,
-		mines: minefield.mines,
-		rclicks: rclicks,
-		clicks: clicks,
-		board_score: minefield.score3BV()
-	}));
+	
+	score_entry.name = $("#name").value;
+	xhttp.send(JSON.stringify(score_entry));
 }
 
 /**
@@ -262,6 +254,8 @@ function populate_board(event: MouseEvent) {
 
 	// Initialize Board array
 	minefield = new MineField(params.width, params.height, exclude, params.mines);
+
+	score_entry.board_score = minefield.score3BV();
 
 	minefield.forEach(installCellEvents);
 
@@ -304,6 +298,12 @@ window.onload = function () {
 		params_form.elements["mines"].value = params.mines;
 	}
 
+	score_entry.height = params.height;
+	score_entry.width = params.width;
+	score_entry.mines = params.width;
+	score_entry.clicks = 0;
+	score_entry.rclicks = 0;
+
 	minecount = $("#minecount") as HTMLParagraphElement;
 	click_form = $("#clicktype-form") as HTMLFormElement;
 
@@ -332,9 +332,11 @@ window.onload = function () {
 		}
 	}
 
+	score_entry.time = 0;
+
 	timer = window.setInterval(function () {
-		time++;
-		document.getElementById("timer").textContent = "Time - " + formatTime(time);
+		++score_entry.time;
+		$("#timer").textContent = `Time - ${formatTime(score_entry.time)}`;
 	}, 1000);
     
 	updateMinecount(params.mines);
