@@ -13,14 +13,12 @@ class Cell {
 	y: number;
 	value: CellValue;
 	status: "U" | "R" | "F";
-	_marked: boolean;
 
 	constructor(value: CellValue, x: number, y: number, status: "U" | "R" | "F" = "U") {
 		this.x = x;
 		this.y = y;
 		this.value = value;
 		this.status = status;
-		this._marked = false;
 	}
 }
 
@@ -110,17 +108,31 @@ class MineField {
 		_flood(cell);
 	}
 
+	/**
+	 * Calculate the 3BV board score.
+	 * 
+	 * Caches value for later use.
+	 * 
+	 * @returns This board's score.
+	 */
 	score3BV(): number {
 		let score = 0;
 		
+		const marked_list: boolean[] = Array(this.width * this.height);
+
+		const marker = (c: Coordinates) => c.y * this.width + c.x;
+		const marked = (c: Coordinates) => marked_list[marker(c)];
+		const mark = (c: Coordinates) => marked_list[marker(c)] = true;
+
+		this.forEach(c => marked_list[marker(c)] = false);
 		this.forEach(cell => {
-			if (cell.value === 0 && !cell._marked) {
+			if (cell.value === 0 && !marked(cell)) {
 				++score;
-				this.floodToNumbers(cell, c => { this.at(c)._marked = true; });
+				this.floodToNumbers(cell, c => { mark(c); });
 			}
 		});
 
-		score += this.count(c => !c._marked && c.value !== 9);
+		score += this.count(c => !marked(c) && c.value !== 9);
 		return score;
 	}
 

@@ -37,19 +37,12 @@ describe("MineField", function () {
 			expect(surroundings).to.include(mf.at({ x: 5, y: 6 }));
 			expect(surroundings).to.include(mf.at({ x: 4, y: 6 }));
 			expect(surroundings).to.include(mf.at({ x: 3, y: 6 }));
+			expect(surroundings).to.have.length(8);
 		});
 
-		it("should be able to alter its surroundings", () => {
-			mf.surrounding({ x: 4, y: 5 }).forEach(c => c._marked = true);
-			expect(mf.surrounding({ x: 4, y: 5 }).filter(c => c._marked)).to.have.length(8);
-		});
-	
-		it("should have only altered its surroundings", () => {
-			let count = 0;
-			mf.forEach(c => {
-				if (c._marked) ++count;
-			});
-			expect(count).to.equal(8);
+		it("should not return out of bounds coordinates", () => {
+			const surroundings = mf.surrounding({ x: 1, y: 0 });
+			expect(surroundings).to.have.length(5);
 		});
 	});
 
