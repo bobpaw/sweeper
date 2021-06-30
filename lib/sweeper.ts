@@ -221,6 +221,30 @@ function flag(event: MouseEvent): boolean {
  * Send an XHR to ud_leaderboard.php file.
  */
 function update_leaderboard() {
+	const leaderboard: Score[] = JSON.parse(localStorage.getItem("leaderboard")) ?? [];
+
+	score_entry.name = $("#name").value;
+	leaderboard.push(score_entry);
+
+	try {
+		localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+		const ld = document.createElement("a");
+		ld.href = "leaders.html";
+		ld.innerHTML = "Leaderboard";
+		while (document.getElementById("end").firstChild) {
+			document.getElementById("end").removeChild(document.getElementById("end").firstChild);
+		}
+		document.getElementById("end").appendChild(ld);
+	} catch (e) {
+		console.log("Couldn't update leaderboard.");
+		while (document.getElementById("end").firstChild) {
+			document.getElementById("end").removeChild(document.getElementById("end").firstChild);
+		}
+		const error_msg = document.createElement("p");
+		error_msg.innerHTML = "Leaderboard doesn't work here.";
+		document.getElementById("end").appendChild(error_msg);
+	}
+	/*
 	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
 		if (this.status === 405) {
@@ -248,6 +272,7 @@ function update_leaderboard() {
 	
 	score_entry.name = $("#name").value;
 	xhttp.send(JSON.stringify(score_entry));
+	*/
 }
 
 /**
