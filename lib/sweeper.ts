@@ -221,58 +221,48 @@ function flag(event: MouseEvent): boolean {
  * Send an XHR to ud_leaderboard.php file.
  */
 function update_leaderboard() {
-	const leaderboard: Score[] = JSON.parse(localStorage.getItem("leaderboard")) ?? [];
-
 	score_entry.name = $("#name").value;
-	leaderboard.push(score_entry);
 
-	try {
-		localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+	const replace_link = () => {
 		const ld = document.createElement("a");
 		ld.href = "leaders.html";
-		ld.innerHTML = "Leaderboard";
-		while (document.getElementById("end").firstChild) {
-			document.getElementById("end").removeChild(document.getElementById("end").firstChild);
-		}
-		document.getElementById("end").appendChild(ld);
-	} catch (e) {
-		console.log("Couldn't update leaderboard.");
-		while (document.getElementById("end").firstChild) {
-			document.getElementById("end").removeChild(document.getElementById("end").firstChild);
-		}
-		const error_msg = document.createElement("p");
-		error_msg.innerHTML = "Leaderboard doesn't work here.";
-		document.getElementById("end").appendChild(error_msg);
-	}
-	/*
-	const xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function () {
-		if (this.status === 405) {
-			console.log("Couldn't update leaderboard.");
-			while (document.getElementById("end").firstChild) {
-				document.getElementById("end").removeChild(document.getElementById("end").firstChild);
-			}
-			const error_msg = document.createElement("p");
-			error_msg.innerHTML = "Leaderboard doesn't work here.";
-			document.getElementById("end").appendChild(error_msg);
-		} else if (this.readyState === 4 && this.status !== 200) {
-			console.log("There was some error updating the leaderboard.");
-		} else if (this.readyState === 4 && this.status === 200) {
-			const ld = document.createElement("a");
-			ld.href = "leaders.html";
-			ld.innerHTML = "Leaderboard";
-			while (document.getElementById("end").firstChild) {
-				document.getElementById("end").removeChild(document.getElementById("end").firstChild);
-			}
-			document.getElementById("end").appendChild(ld);
-		}
+		ld.textContent = "Leaderboard";
+		while ($("#end").firstChild) $("#end").removeChild($("#end").firstChild);
+		$("#end").appendChild(ld);
 	};
+
+	const xhttp = new XMLHttpRequest();
+	xhttp.addEventListener("load", () => {
+		if (xhttp.status === 200) {
+			replace_link();
+		} else {
+			const leaderboard: Score[] = JSON.parse(localStorage.getItem("leaderboard")) ?? [];
+
+			leaderboard.push(score_entry);
+
+			try {
+				localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+				replace_link();
+			} catch (e) {
+				if (e instanceof DOMException
+					&& (e.name === "QuotaExceededError" || e.code === 22)) {
+					while ($("#end").firstChild) {
+						$("#end").removeChild($("#end").firstChild);
+					}
+					const error_msg = document.createElement("p");
+					error_msg.textContent = "Leaderboard doesn't work here.";
+					$("#end").appendChild(error_msg);
+				} else {
+					throw e;
+				}
+			}
+		}
+	});
+
 	xhttp.open("POST", "ud_leaderboard.php", true);
 	xhttp.setRequestHeader("Content-Type", "application/json");
 	
-	score_entry.name = $("#name").value;
 	xhttp.send(JSON.stringify(score_entry));
-	*/
 }
 
 /**
