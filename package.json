@@ -88,7 +88,13 @@
 		"extends": "stylelint-config-sass-guidelines",
 		"rules": {
 			"string-quotes": "double",
-			"selector-max-id": 1
+			"selector-max-id": 1,
+			"selector-class-pattern": [
+				"^\\w+(?:__\\w)*(?:--\\w)?",
+				{
+					"resolveNestedSelectors": true
+				}
+			]
 		}
 	}
 }
