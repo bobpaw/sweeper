@@ -334,7 +334,7 @@ window.onload = function () {
 
 	score_entry.height = params.height;
 	score_entry.width = params.width;
-	score_entry.mines = params.width;
+	score_entry.mines = params.mines;
 	score_entry.clicks = 0;
 	score_entry.rclicks = 0;
 
