@@ -1,15 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "watch": true,
-    "lib": [ "dom", "es2019" ],
-    "removeComments": true,
-    "noEmitOnError": true,
-    "composite": true
-  },
-  "files": [],
-  "references": [
-    {"path": "lib"},
-    {"path": "test"}
-  ]
+	"compilerOptions": {
+		"target": "es6",
+		"watch": true,
+		"lib": [ "dom", "es2019" ],
+		"removeComments": true,
+		"noEmitOnError": true,
+		"composite": true
+	},
+	"files": [],
+	"references": [
+		{ "path": "lib" },
+		{ "path": "test" }
+	]
 }

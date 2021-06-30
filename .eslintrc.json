@@ -19,7 +19,8 @@
 	],
 	"ignorePatterns": [
 		"out/",
-		"**/*.d.ts"
+		"**/*.d.ts",
+		"package-lock.json"
 	],
 	"rules": {
 		"indent": [
