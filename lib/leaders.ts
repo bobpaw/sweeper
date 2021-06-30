@@ -40,6 +40,13 @@ function create_table(scores: Score[]): HTMLTableElement {
 	return table;
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+	const scores: Score[] = JSON.parse(localStorage.getItem("leaderboard")) ?? [];
+
+	document.getElementById("content").appendChild(create_table(scores));
+});
+
+/*
 window.addEventListener("load", function () {
 	let scores: Score[] = [];
 	const xhttp = new XMLHttpRequest();
@@ -52,3 +59,4 @@ window.addEventListener("load", function () {
 	xhttp.open("GET", "leaderboard.json", true);
 	xhttp.send();
 });
+*/
