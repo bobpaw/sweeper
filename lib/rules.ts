@@ -33,8 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	clones[4] = clones[3].cloneNode(true) as DocumentFragment;
 	tds = clones[4].querySelectorAll("td");
-	tds[6].classList.add("field__cell--mine");
-	tds[7].classList.add("field__cell--mine");
+	tds[6].classList.add("field__cell--revealed", "field__cell--mine");
+	tds[7].classList.add("field__cell--revealed", "field__cell--mine");
 
 	clones[5] = clones[3].cloneNode(true) as DocumentFragment;
 	tds = clones[5].querySelectorAll("td");

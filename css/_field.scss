@@ -12,28 +12,28 @@ $cell-size: 20px;
     height: $cell-size;
     text-align: center;
     width: $cell-size;
+  }
 
-    &--revealed {
-      background-color: rgb(198, 198, 198);
-      cursor: default;
-    }
+  .field__cell--revealed {
+    background-color: rgb(198, 198, 198);
+    cursor: default;
+  }
 
-    &--flagged {
-      background-color: rgb(198, 198, 198);
-      background-image: url("../images/flag.svg");
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
-      cursor: pointer;
-    }
+  .field__cell--flagged {
+    background-color: rgb(198, 198, 198);
+    background-image: url("../images/flag.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+  }
 
-    &--wrong {
-      background-color: rgb(255, 0, 0);
-      cursor: default;
-    }
+  .field__cell--wrong {
+    background-color: rgb(255, 0, 0);
+    cursor: default;
+  }
 
-    &--correct {
-      background-color: rgb(0, 255, 0);
-    }
+  .field__cell--correct {
+    background-color: rgb(0, 255, 0);
   }
 }
