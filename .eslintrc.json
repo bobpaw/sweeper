@@ -19,6 +19,7 @@
 	],
 	"ignorePatterns": [
 		"out/",
+		"*.js",
 		"**/*.d.ts",
 		"package-lock.json"
 	],
@@ -150,6 +151,16 @@
 				"linebreak-style": "off",
 				"semi": "off"
 			}
+		},
+		{
+			"files": [
+				"scripts/**/*.js"
+			],
+			"env": {
+				"node": true
+			},
+			"extends": "eslint:recommended",
+			"parser": "espree"
 		}
 	]
 }
