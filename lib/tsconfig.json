@@ -1,7 +1,4 @@
 {
 	"extends": "..",
-	"compilerOptions": {
-		"module": "ES2015"
-	},
 	"include": [ "**/*.ts" ]
 }

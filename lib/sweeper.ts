@@ -221,7 +221,7 @@ function flag(event: MouseEvent): boolean {
  * Send an XHR to ud_leaderboard.php file.
  */
 function update_leaderboard() {
-	score_entry.name = $("#name").value;
+	score_entry.name = ($("#name") as HTMLInputElement).value;
 
 	const replace_link = () => {
 		const ld = document.createElement("a");

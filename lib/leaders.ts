@@ -6,7 +6,7 @@
 import { formatTime } from "./formatTime.js";
 import type { Score } from "./score";
 
-const $: typeof document.querySelector = document.querySelector.bind(document);
+const $ = document.querySelector.bind(document);
 
 document.addEventListener("DOMContentLoaded", () => {
 	let scores: Score[];
