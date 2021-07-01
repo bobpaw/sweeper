@@ -1,0 +1,39 @@
+$cell-size: 20px;
+
+.field {
+  border-spacing: 0;
+  outline: 1px solid rgb(0, 0, 0);
+
+  .field__cell {
+    background-color: rgb(230, 230, 230);
+    border: 1px solid rgb(0, 0, 0);
+    cursor: pointer;
+    display: inline-block;
+    height: $cell-size;
+    text-align: center;
+    width: $cell-size;
+  }
+
+  .field__cell--revealed {
+    background-color: rgb(198, 198, 198);
+    cursor: default;
+  }
+
+  .field__cell--flagged {
+    background-color: rgb(198, 198, 198);
+    background-image: url("../images/flag.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+  }
+
+  .field__cell--wrong {
+    background-color: rgb(255, 0, 0);
+    cursor: default;
+  }
+
+  .field__cell--correct {
+    background-color: rgb(0, 255, 0);
+  }
+}

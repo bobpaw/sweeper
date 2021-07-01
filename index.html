@@ -9,19 +9,47 @@
     <meta property="og:title" content="Minesweeper by Aiden" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://bobpaw.github.io/sweeper" />
-    <meta property="og:image" content="https://bobpaw/github.io/sweeper/ogimage.jpg" />
+    <meta property="og:image" content="https://bobpaw/github.io/sweeper/images/ogimage.jpg" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="-1" />
     <title>Minesweeper</title>
-    <link type="image/png" rel="shortcut icon" href="favicon.png" />
-    <link type="text/css" rel="stylesheet" href="styles.css" />
-    <script type="application/javascript" src="http-get.js"></script>
-    <script type="application/javascript" src="sweeper.js"></script>
+    <link type="image/png" rel="shortcut icon" href="images/favicon.png" />
+    <link type="text/css" rel="stylesheet" href="css/index.css" />
+    <script type="module" src="lib/MineField.js"></script>
+    <script type="module" src="lib/formatTime.js"></script>
+    <script type="module" src="lib/sweeper.js"></script>
   </head>
   <body>
     <h1>Minesweeper - <a target="_blank" href="rules.html">Tutorial</a></h1>
     <div id="content">
-      <p>I'm sorry, JavaScript is required.</p>
+      <form id="clicktype-form">
+        <label for="clicktype" class="big_and_bold">Click Mode: </label>
+        <input type="radio" name="clicktype" value="reveal" checked="checked">Reveal</input>
+        <input type="radio" name="clicktype" value="reveal">Flag</input>
+      </form> <!-- FIXME: Should be 18px leading between this and next element. -->
+      <p id="fatal-warning">This probably won't work. Try a field area less than 5000.</p>
+      <p id="apology">I'm sorry, JavaScript is required.</p>
+      <div id="end">
+          <div id="win-screen">
+          <br>
+          <p class="big-and-bold">Congratulations! You win! :)</p>
+          Name: <input type="text" id="name" /><br>
+          <input type="button" id="leaderboard" value="Push to leaderboard" />
+        </div>
+        <div id="lose-screen">
+          <br />
+          <p class="big-and-bold">I am so sorry. You have lost. :(</p>
+        </div>
+      </div>
+      <p id="minecount"></p>
+      <p id="timer">Time - 0:00</p>
+      <form id="params" method="get">
+        Width: <input type="number" placeholder="10" name="width" />
+        Height: <input type="number" placeholder="10" name="height" />
+        Mines: <input type="number" name="mines" />
+        <br>
+        <input type="submit" value="New Game" />
+      </form>
     </div>
   </body>
 </html>

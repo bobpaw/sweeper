@@ -1,0 +1,21 @@
+@import "field";
+
+.field {
+  .field__cell {
+    cursor: default;
+  }
+
+  .field__cell--mine {
+    font-weight: bold;
+    opacity: 0.5;
+  
+    &::after {
+      content: "M";
+    }
+  }
+  
+}
+
+.example {
+  padding: 10px;
+}

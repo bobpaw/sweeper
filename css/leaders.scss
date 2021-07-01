@@ -1,0 +1,14 @@
+.leaderboard {
+  border-collapse: collapse;
+  width: 40%;
+}
+
+.leaderboard__heading {
+  border: 2px solid rgb(0, 0, 0);
+  text-align: left;
+}
+
+.leaderboard__element {
+  border: 2px solid rgb(0, 0, 0);
+  text-align: right;
+}

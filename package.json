@@ -1,0 +1,100 @@
+{
+	"name": "sweeper",
+	"version": "1.0.1",
+	"description": "HTML5 and JavaScript Minesweeper game",
+	"private": true,
+	"scripts": {
+		"prebuild": "npm run compile",
+		"build": "npm run build:sass",
+		"build:sass": "sass --update css:css",
+		"clean": "npm run clean:ts && npm run clean:sass && npm run clean:cov",
+		"clean:sass": "rimraf css/*.css css/*.css.map",
+		"clean:ts": "tsc -b --clean",
+		"clean:cov": "rimraf .nyc_output/ coverage/",
+		"compile": "npm run compile:ts",
+		"compile:ts": "tsc -b",
+		"precoverage": "npm run test:cov",
+		"coverage": "nyc report --reporter=text-lcov | coveralls",
+		"lint:js": "eslint --cache --ext .ts,.json .",
+		"lint:css": "stylelint --cache css/**.scss",
+		"lint": "npm run lint:js && npm run lint:css",
+		"lint-fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
+		"prepare": "husky install",
+		"prestart:dev": "npm run build",
+		"start:dev": "http-server -a localhost -g -b",
+		"pretest": "npm run clean:ts && npm run lint:js",
+		"test": "mocha",
+		"test:cov": "nyc npm test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bobpaw/sweeper.git"
+	},
+	"keywords": [
+		"browser",
+		"minesweeper",
+		"games"
+	],
+	"author": "Aiden Woodruff",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/bobpaw/sweeper/issues"
+	},
+	"homepage": "https://github.com/bobpaw/sweeper#readme",
+	"dependencies": {
+		"minify": "^7.0.2",
+		"rimraf": "^3.0.2",
+		"sass": "^1.34.1",
+		"typescript": "^4.3.2"
+	},
+	"devDependencies": {
+		"@istanbuljs/nyc-config-typescript": "^1.0.1",
+		"@types/chai": "^4.2.18",
+		"@types/mocha": "^8.2.2",
+		"@typescript-eslint/eslint-plugin": "^4.27.0",
+		"@typescript-eslint/parser": "^4.26.1",
+		"chai": "^4.3.4",
+		"eslint": "^7.28.0",
+		"eslint-plugin-jsdoc": "^35.1.3",
+		"http-server": "^0.12.3",
+		"husky": "^6.0.0",
+		"lint-staged": "^11.0.0",
+		"mocha": "^9.0.0",
+		"nyc": "^15.1.0",
+		"sinon": "^11.1.1",
+		"source-map-support": "^0.5.19",
+		"stylelint": "^13.13.1",
+		"stylelint-config-sass-guidelines": "^8.0.0",
+		"ts-node": "^10.0.0"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,ts}": "npm run lint:fix"
+	},
+	"nyc": {
+		"extends": "@istanbuljs/nyc-config-typescript",
+		"all": true,
+		"reporter": [
+			"html",
+			"text",
+			"lcov"
+		]
+	},
+	"stylelint": {
+		"extends": "stylelint-config-sass-guidelines",
+		"rules": {
+			"string-quotes": "double",
+			"selector-max-id": 1,
+			"selector-class-pattern": [
+				"^\\w+(?:__\\w)*(?:--\\w)?",
+				{
+					"resolveNestedSelectors": true
+				}
+			]
+		}
+	}
+}

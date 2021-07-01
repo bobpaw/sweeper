@@ -7,15 +7,39 @@
     <meta name="keywords" content="minesweeper, leaderboard" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="-1" />
-    <link type="image/png" rel="shortcut icon" href="favicon.png" />
-    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link type="image/png" rel="shortcut icon" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="css/leaders.css" />
     <title>Leaderboard</title>
-    <script type="application/javascript" src="leaders.js">
-    </script>
+    <script type="module" src="lib/formatTime.js"></script>
+    <script type="module" src="lib/leaders.js"></script>
   </head>
   <body>
     <h1>Leaderboard</h1>
-    <div class="leaderboard" id="content">
-    </div>
+    <template id="leaderboard_row">
+      <tr>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+        <td class="leaderboard__element"></td>
+      </tr>
+    </template>
+    <table class="leaderboard" id="content">
+      <thead>
+        <tr>
+          <th class="leaderboard__heading">Name</th>
+          <th class="leaderboard__heading">Time</th>
+          <th class="leaderboard__heading">Width</th>
+          <th class="leaderboard__heading">Height</th>
+          <th class="leaderboard__heading">Mines</th>
+          <th class="leaderboard__heading">Rclicks</th>
+          <th class="leaderboard__heading">Clicks</th>
+          <th class="leaderboard__heading">Board_score</th>
+        </tr>
+      </thead>
+    </table>
   </body>
 </html>
