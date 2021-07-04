@@ -58,6 +58,7 @@
 		"lint-staged": "^11.0.0",
 		"mocha": "^9.0.0",
 		"nyc": "^15.1.0",
+		"playwright": "^1.12.3",
 		"readdirp": "^3.5.0",
 		"rimraf": "^3.0.2",
 		"sass": "^1.35.1",
